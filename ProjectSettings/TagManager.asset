@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags:
+  - BG
+  - Background
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Player
+  - Water
+  - UI
+  - Ground
+  - InvisiblePlayer
+  - lineOfSightMask
+  - Enemy
+  - PlayerBullet
+  - EnemyBullet
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 4236269191
+    locked: 0
+  - name: Ground
+    uniqueID: 3900352229
+    locked: 0
+  - name: Ground Details
+    uniqueID: 3429328577
+    locked: 0
+  - name: Props
+    uniqueID: 2030438697
+    locked: 0
+  - name: Charaters
+    uniqueID: 1681219085
+    locked: 0
+  - name: VFX
+    uniqueID: 4015421713
+    locked: 0
+  - name: UI
+    uniqueID: 3554587079
+    locked: 0
+  m_RenderingLayers:
+  - Default
+  m_MigratedRenderPipelines: []

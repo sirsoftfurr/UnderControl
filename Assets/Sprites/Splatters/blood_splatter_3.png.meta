@@ -1,0 +1,897 @@
+fileFormatVersion: 2
+guid: 98dfac6f32f8df34ea08e3a7a807812b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4223980139150955861
+    second: blood_splatter_3_0
+  - first:
+      213: 5182657456810737601
+    second: blood_splatter_3_1
+  - first:
+      213: -3434071227539481773
+    second: blood_splatter_3_2
+  - first:
+      213: -5249694663784352647
+    second: blood_splatter_3_3
+  - first:
+      213: 8055172706289554128
+    second: blood_splatter_3_4
+  - first:
+      213: 7038655551171070998
+    second: blood_splatter_3_5
+  - first:
+      213: 5537378644306995478
+    second: blood_splatter_3_6
+  - first:
+      213: -5789268940029515566
+    second: blood_splatter_3_7
+  - first:
+      213: -6968392246997395100
+    second: blood_splatter_3_8
+  - first:
+      213: -1245037171718191140
+    second: blood_splatter_3_9
+  - first:
+      213: -3751803591304538217
+    second: blood_splatter_3_10
+  - first:
+      213: -2035632142559354211
+    second: blood_splatter_3_11
+  - first:
+      213: 2836976637844467565
+    second: blood_splatter_3_12
+  - first:
+      213: -8859640421226640238
+    second: blood_splatter_3_13
+  - first:
+      213: -3516878094683419302
+    second: blood_splatter_3_14
+  - first:
+      213: -7588934735610398369
+    second: blood_splatter_3_15
+  - first:
+      213: 371858062423154114
+    second: blood_splatter_3_16
+  - first:
+      213: 3164945336088913605
+    second: blood_splatter_3_17
+  - first:
+      213: -464078562613097377
+    second: blood_splatter_3_18
+  - first:
+      213: -7418290080916389199
+    second: blood_splatter_3_19
+  - first:
+      213: -4993066258417811607
+    second: blood_splatter_3_20
+  - first:
+      213: -3100747652954650184
+    second: blood_splatter_3_21
+  - first:
+      213: -2604958875034392858
+    second: blood_splatter_3_22
+  - first:
+      213: 6646137279667625016
+    second: blood_splatter_3_23
+  - first:
+      213: 1336570472908007178
+    second: blood_splatter_3_24
+  - first:
+      213: -1764176043784541629
+    second: blood_splatter_3_25
+  - first:
+      213: 3112937206547426963
+    second: blood_splatter_3_26
+  - first:
+      213: -7590081742159077015
+    second: blood_splatter_3_27
+  - first:
+      213: -8084029652866237992
+    second: blood_splatter_3_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: blood_splatter_3_0
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 390
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 555d5649e879e9a30800000000000000
+      internalID: 4223980139150955861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_1
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 331
+        width: 92
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfbbb18f7f7ce740800000000000000
+      internalID: 5182657456810737601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_2
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 351
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b9e1db96ab750d0800000000000000
+      internalID: -3434071227539481773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_3
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 371
+        width: 28
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 974bed174865527b0800000000000000
+      internalID: -5249694663784352647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_4
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 333
+        width: 56
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d29fc2f5e8b9cf60800000000000000
+      internalID: 8055172706289554128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_5
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 379
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61c02ef6ee35ea160800000000000000
+      internalID: 7038655551171070998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_6
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 371
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 619a0c8e988b8dc40800000000000000
+      internalID: 5537378644306995478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_7
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 353
+        width: 28
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d8a658629268afa0800000000000000
+      internalID: -5789268940029515566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_8
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 370
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4695226eb2c4b4f90800000000000000
+      internalID: -6968392246997395100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_9
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 372
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd7849fe94db8bee0800000000000000
+      internalID: -1245037171718191140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_10
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 0
+        width: 512
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7971249f28aeeebc0800000000000000
+      internalID: -3751803591304538217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_11
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 331
+        width: 30
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d92e1610a5bffb3e0800000000000000
+      internalID: -2035632142559354211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_12
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 343
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6f2dce9837fe5720800000000000000
+      internalID: 2836976637844467565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_13
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 345
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29c081f2afb3c0580800000000000000
+      internalID: -8859640421226640238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_14
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 349
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5dca00910a813fc0800000000000000
+      internalID: -3516878094683419302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_15
+      rect:
+        serializedVersion: 2
+        x: 498
+        y: 329
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f59b15cd010bea690800000000000000
+      internalID: -7588934735610398369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_16
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 256
+        width: 84
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cdd89500fa192500800000000000000
+      internalID: 371858062423154114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_17
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 332
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c6eb1bb3052ceb20800000000000000
+      internalID: 3164945336088913605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_18
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 339
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5c829f81034f89f0800000000000000
+      internalID: -464078562613097377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_19
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 319
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2cc26a970fc0990800000000000000
+      internalID: -7418290080916389199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_20
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 202
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96f740f31b015bab0800000000000000
+      internalID: -4993066258417811607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_21
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 212
+        width: 20
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b90387207ee7f4d0800000000000000
+      internalID: -3100747652954650184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_22
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 185
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6e21f64b359dbd0800000000000000
+      internalID: -2604958875034392858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_23
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 165
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83cd113a4a2db3c50800000000000000
+      internalID: 6646137279667625016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_24
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 152
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0725fe73c37c8210800000000000000
+      internalID: 1336570472908007178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_25
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 76
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34ae7f43c336487e0800000000000000
+      internalID: -1764176043784541629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_26
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 40
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e2b5475ef533b20800000000000000
+      internalID: 3112937206547426963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 23
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9612e669edc9aa690800000000000000
+      internalID: -7590081742159077015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood_splatter_3_28
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 30
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d9fe2b9cd1cfcf80800000000000000
+      internalID: -8084029652866237992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      blood_splatter_3_0: 4223980139150955861
+      blood_splatter_3_1: 5182657456810737601
+      blood_splatter_3_10: -3751803591304538217
+      blood_splatter_3_11: -2035632142559354211
+      blood_splatter_3_12: 2836976637844467565
+      blood_splatter_3_13: -8859640421226640238
+      blood_splatter_3_14: -3516878094683419302
+      blood_splatter_3_15: -7588934735610398369
+      blood_splatter_3_16: 371858062423154114
+      blood_splatter_3_17: 3164945336088913605
+      blood_splatter_3_18: -464078562613097377
+      blood_splatter_3_19: -7418290080916389199
+      blood_splatter_3_2: -3434071227539481773
+      blood_splatter_3_20: -4993066258417811607
+      blood_splatter_3_21: -3100747652954650184
+      blood_splatter_3_22: -2604958875034392858
+      blood_splatter_3_23: 6646137279667625016
+      blood_splatter_3_24: 1336570472908007178
+      blood_splatter_3_25: -1764176043784541629
+      blood_splatter_3_26: 3112937206547426963
+      blood_splatter_3_27: -7590081742159077015
+      blood_splatter_3_28: -8084029652866237992
+      blood_splatter_3_3: -5249694663784352647
+      blood_splatter_3_4: 8055172706289554128
+      blood_splatter_3_5: 7038655551171070998
+      blood_splatter_3_6: 5537378644306995478
+      blood_splatter_3_7: -5789268940029515566
+      blood_splatter_3_8: -6968392246997395100
+      blood_splatter_3_9: -1245037171718191140
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
