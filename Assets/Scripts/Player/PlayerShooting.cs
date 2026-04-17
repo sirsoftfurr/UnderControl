@@ -18,6 +18,15 @@ public class PlayerShooting : MonoBehaviour
     private float nextFireTime = 0f;
     private bool canShoot = true;
 
+    private SpriteRenderer sr; // ✅ NEW
+
+    void Start()
+    {
+        // Get SpriteRenderer from bodySprite
+        if (bodySprite != null)
+            sr = bodySprite.GetComponent<SpriteRenderer>();
+    }
+
     void Update()
     {
         if (!enabled) return;
@@ -38,9 +47,11 @@ public class PlayerShooting : MonoBehaviour
         // Rotate gun pivot toward target
         gunPivot.up = aimDirection;
 
-        // Flip body sprite if aiming left
-        if (aimDirection.x != 0)
-            bodySprite.localScale = new Vector3(aimDirection.x > 0 ? 1 : -1, 1, 1);
+        // ✅ FIXED: Flip using SpriteRenderer instead of scale
+        if (sr != null && aimDirection.x != 0)
+        {
+            sr.flipX = aimDirection.x < 0;
+        }
 
         // Shoot input (player or AI target)
         if (canShoot && Time.time >= nextFireTime)
@@ -59,13 +70,13 @@ public class PlayerShooting : MonoBehaviour
 
         GameObject bullet = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        
+
         BulletScript bulletScript = bullet.GetComponent<BulletScript>();
         if (bulletScript != null)
         {
             bulletScript.SetOwner(gameObject);
         }
-        
+
         if (rb != null)
         {
             rb.linearVelocity = direction * bulletSpeed;
@@ -75,14 +86,12 @@ public class PlayerShooting : MonoBehaviour
     // -------------------------
     // PUBLIC METHODS FOR POSSESSION
     // -------------------------
-    
-    /// Enable or disable shooting temporarily
+
     public void SetShootingEnabled(bool enabled)
     {
         canShoot = enabled;
     }
-    
-    /// Reset cooldown after possession or AI takeover
+
     public void ResetCooldown()
     {
         nextFireTime = 0f;

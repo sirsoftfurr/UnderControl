@@ -19,18 +19,29 @@ public class PlayerMovement : MonoBehaviour
     private float jumpTimeCounter;
     private bool isJumping;
 
+    private SpriteRenderer sr;
+
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
+        float moveInput = Input.GetAxis("Horizontal");
+
         // Movement
         body.linearVelocity = new Vector2(
-            Input.GetAxis("Horizontal") * speed,
+            moveInput * speed,
             body.linearVelocity.y
         );
+
+        // Flip sprite
+        if (moveInput != 0)
+        {
+            sr.flipX = moveInput < 0;
+        }
 
         // Start jump
         if (Input.GetButtonDown("Jump") && IsGrounded())

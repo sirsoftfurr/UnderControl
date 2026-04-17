@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlatformerEnemyAI : MonoBehaviour
 {
-    public Transform player;
+     public Transform player;
     public float moveSpeed = 3f;
     public float jumpForce = 7f;
 
@@ -12,28 +12,28 @@ public class PlatformerEnemyAI : MonoBehaviour
     public float groundCheckRadius = 0.2f;
 
     private Rigidbody2D rb;
+    private SpriteRenderer sr; // ✅ NEW
 
     private List<Node> path = new List<Node>();
     private int pathIndex = 0;
 
     private float pathUpdateTimer = 0f;
     public float pathUpdateInterval = 0.5f;
-    
-    
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>(); // ✅ NEW
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null)
             player = p.transform;
-        
-        
     }
 
     void Update()
     {
-        FacePlayer(); // ✅ Always face player
+        FacePlayer(); // ✅ Now uses flipX
+
         pathUpdateTimer += Time.deltaTime;
 
         if (pathUpdateTimer >= pathUpdateInterval)
@@ -161,40 +161,34 @@ public class PlatformerEnemyAI : MonoBehaviour
 
         Vector2 direction = targetNode.transform.position - transform.position;
 
-        // Move horizontally
         float move = Mathf.Sign(direction.x);
         rb.linearVelocity = new Vector2(move * moveSpeed, rb.linearVelocity.y);
 
-        // Jump if needed
         if (direction.y > 1f && IsGrounded())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
 
-        // Reached node
         if (Vector2.Distance(transform.position, targetNode.transform.position) < 0.3f)
         {
             pathIndex++;
         }
     }
+
     bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
-    
+
+    // ---------------- FIXED FLIPPING ----------------
+
     void FacePlayer()
     {
-        if (player == null || !player.gameObject)
+        if (player == null || !player.gameObject || sr == null)
             return;
 
-        if (player.position.x > transform.position.x)
-        {
-            transform.localScale = new Vector3(0.1f,0.1f , 0.1f);
-        }
-        else
-        {
-            transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
-        }
+        // ✅ Flip sprite instead of scale
+        sr.flipX = player.position.x < transform.position.x;
     }
 }
 
