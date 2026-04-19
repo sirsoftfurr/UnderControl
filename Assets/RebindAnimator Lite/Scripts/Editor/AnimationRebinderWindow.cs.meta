@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d3527dd4cf00546e8af0a19a91f1fb46
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 306307
+  packageName: RebindAnimator Lite
+  packageVersion: 1.0
+  assetPath: Assets/RebindAnimator Lite/Scripts/Editor/AnimationRebinderWindow.cs
+  uploadId: 720039

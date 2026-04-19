@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7d10f41ff08804112a001f9b2b34d3de
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 306307
+  packageName: RebindAnimator Lite
+  packageVersion: 1.0
+  assetPath: Assets/RebindAnimator Lite/Demo/Animations/Test.controller
+  uploadId: 720039
