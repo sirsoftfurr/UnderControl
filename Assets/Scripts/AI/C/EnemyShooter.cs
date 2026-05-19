@@ -6,8 +6,6 @@ public class EnemyShooter : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float fireRate = 1f;
-    private float nextFireTime;
-
     public float detectionRange = 10f;
 
     public LayerMask targetLayer;
@@ -15,70 +13,51 @@ public class EnemyShooter : MonoBehaviour
 
     public int damage = 20;
 
-    private Transform player;
+    private float nextFireTime;
     private bool canShoot = true;
 
-    public void SetShootingEnabled(bool enabled)
+    public void SetShootingEnabled(bool value)
     {
-        canShoot = enabled;
-    }
-    void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        canShoot = value;
     }
 
     void Update()
     {
-        if (!enabled || !canShoot)
-            return;
-        
-        if (player == null) return;
+        if (!canShoot) return;
 
-        float distance = Vector2.Distance(transform.position, player.position);
+        Transform target = LatchScript.ControlledBody;
+        if (target == null || firePoint == null) return;
 
-        if (distance <= detectionRange)
+        float dist = Vector2.Distance(transform.position, target.position);
+        if (dist > detectionRange) return;
+
+        Vector2 dir = (target.position - firePoint.position).normalized;
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            firePoint.position,
+            dir,
+            detectionRange,
+            obstacleLayer | targetLayer
+        );
+
+        if (hit.collider != null &&
+            Time.time >= nextFireTime)
         {
-            Vector2 direction = (player.position - firePoint.position).normalized;
-
-            RaycastHit2D hit = Physics2D.Raycast(
-                firePoint.position,
-                direction,
-                detectionRange,
-                obstacleLayer | targetLayer
-            );
-
-            if (hit.collider != null && hit.transform == player)
-            {
-                if (Time.time >= nextFireTime)
-                {
-                    Shoot(direction);
-                    nextFireTime = Time.time + 1f / fireRate;
-                }
-            }
-
-            if (hit.collider != null)
-            {
-                if (((1 << hit.collider.gameObject.layer) & targetLayer) != 0)
-                {
-                    if (Time.time >= nextFireTime)
-                    {
-                        Shoot(direction);
-                        nextFireTime = Time.time + 1f / fireRate;
-                    }
-                }
-            }
+            Shoot(dir);
+            nextFireTime = Time.time + 1f / fireRate;
         }
     }
 
-    void Shoot(Vector2 direction)
+    void Shoot(Vector2 dir)
     {
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
-        BulletScript bulletScript = bullet.GetComponent<BulletScript>();
-        bulletScript.SetDirection(direction);
-        bulletScript.damage = damage;
-        bulletScript.SetOwner(gameObject);
+        BulletScript b = bullet.GetComponent<BulletScript>();
+        if (b != null)
+        {
+            b.SetDirection(dir);
+            b.damage = damage;
+            b.SetOwner(gameObject);
+        }
     }
 }
-
-

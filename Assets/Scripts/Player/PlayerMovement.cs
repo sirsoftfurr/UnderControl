@@ -8,55 +8,81 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D body;
 
-    public float speed;
-    public float jumpForce = 10f;
+    [Header("Movement")]
+    public float speed = 5f;
 
+    [Header("Jump")]
+    public float jumpForce = 10f;
+    public float jumpTime = 0.2f;
+
+    [Header("Ground Check")]
     public Transform groundCheck;
     public LayerMask groundMask;
     public Vector2 groundCheckSize = new Vector2(0.2f, 0.2f);
 
-    public float jumpTime = 0.2f;      // how long you can hold jump
     private float jumpTimeCounter;
     private bool isJumping;
 
-    private SpriteRenderer sr;
-
-    void Start()
+    private void Start()
     {
         body = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    private void Update()
     {
-        float moveInput = Input.GetAxis("Horizontal");
+        //------------------------------------------------
+        // MOVEMENT
+        //------------------------------------------------
 
-        // Movement
+        float moveInput = Input.GetAxisRaw("Horizontal");
+
         body.linearVelocity = new Vector2(
             moveInput * speed,
             body.linearVelocity.y
         );
 
-        // Flip sprite
+        //------------------------------------------------
+        // CHARACTER FLIP (RIGGED CHARACTER SAFE)
+        //------------------------------------------------
+
         if (moveInput != 0)
         {
-            sr.flipX = moveInput < 0;
+            Vector3 scale = transform.localScale;
+
+            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
+
+            transform.localScale = scale;
         }
 
-        // Start jump
+        //------------------------------------------------
+        // START JUMP
+        //------------------------------------------------
+
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             isJumping = true;
+
             jumpTimeCounter = jumpTime;
-            body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
+
+            body.linearVelocity = new Vector2(
+                body.linearVelocity.x,
+                jumpForce
+            );
         }
 
-        // Continue jump while holding
+        //------------------------------------------------
+        // CONTINUE JUMP
+        //------------------------------------------------
+
         if (Input.GetButton("Jump") && isJumping)
         {
             if (jumpTimeCounter > 0)
             {
-                body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
+                body.linearVelocity = new Vector2(
+                    body.linearVelocity.x,
+                    jumpForce
+                );
+
                 jumpTimeCounter -= Time.deltaTime;
             }
             else
@@ -65,24 +91,37 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Stop jump early when released
+        //------------------------------------------------
+        // STOP JUMP EARLY
+        //------------------------------------------------
+
         if (Input.GetButtonUp("Jump"))
         {
             isJumping = false;
         }
     }
 
-    bool IsGrounded()
+    private bool IsGrounded()
     {
-        return Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0, groundMask);
+        return Physics2D.OverlapBox(
+            groundCheck.position,
+            groundCheckSize,
+            0,
+            groundMask
+        );
     }
 
-    void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
+        if (groundCheck == null)
+            return;
 
         Gizmos.color = Color.white;
-        Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
+
+        Gizmos.DrawWireCube(
+            groundCheck.position,
+            groundCheckSize
+        );
     }
 }
 

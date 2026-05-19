@@ -3,9 +3,9 @@ using UnityEngine;
 public class PlayerShooting : MonoBehaviour
 {
     [Header("References")]
-    public Transform bodySprite;    // The visible sprite
-    public Transform gunPivot;      // Rotates toward aim
-    public Transform shootPoint;    // Where bullets come out
+    public Transform bodySprite;
+    public Transform gunPivot;
+    public Transform shootPoint;
     public GameObject projectilePrefab;
 
     [Header("Settings")]
@@ -13,65 +13,92 @@ public class PlayerShooting : MonoBehaviour
     public float fireRate = 5f;
 
     [Header("AI Target (optional)")]
-    public Transform aimTarget;     // If null, use mouse
+    public Transform aimTarget;
 
     private float nextFireTime = 0f;
     private bool canShoot = true;
 
-    private SpriteRenderer sr; // ✅ NEW
-
-    void Start()
+    private void Update()
     {
-        // Get SpriteRenderer from bodySprite
-        if (bodySprite != null)
-            sr = bodySprite.GetComponent<SpriteRenderer>();
-    }
+        if (!enabled)
+            return;
 
-    void Update()
-    {
-        if (!enabled) return;
+        //------------------------------------------------
+        // GET AIM DIRECTION
+        //------------------------------------------------
 
         Vector2 aimDirection;
 
-        // Determine aiming direction
         if (aimTarget != null)
         {
-            aimDirection = ((Vector2)aimTarget.position - (Vector2)gunPivot.position).normalized;
+            aimDirection =
+                ((Vector2)aimTarget.position -
+                (Vector2)gunPivot.position).normalized;
         }
         else
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            aimDirection = (mousePos - (Vector2)gunPivot.position).normalized;
+            Vector2 mousePos =
+                Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            aimDirection =
+                (mousePos -
+                (Vector2)gunPivot.position).normalized;
         }
 
-        // Rotate gun pivot toward target
+        //------------------------------------------------
+        // ROTATE GUN
+        //------------------------------------------------
+
         gunPivot.up = aimDirection;
 
-        // ✅ FIXED: Flip using SpriteRenderer instead of scale
-        if (sr != null && aimDirection.x != 0)
+        //------------------------------------------------
+        // FLIP CHARACTER
+        // (SAFE FOR RIGGED CHARACTERS)
+        //------------------------------------------------
+
+        if (bodySprite != null && aimDirection.x != 0)
         {
-            sr.flipX = aimDirection.x < 0;
+            Vector3 scale = bodySprite.localScale;
+
+            scale.x =
+                Mathf.Abs(scale.x) * -Mathf.Sign(aimDirection.x);
+
+            bodySprite.localScale = scale;
         }
 
-        // Shoot input (player or AI target)
+        //------------------------------------------------
+        // SHOOT
+        //------------------------------------------------
+
         if (canShoot && Time.time >= nextFireTime)
         {
             if (aimTarget != null || Input.GetKey(KeyCode.Mouse0))
             {
                 Shoot(aimDirection);
-                nextFireTime = Time.time + 1f / fireRate;
+
+                nextFireTime =
+                    Time.time + 1f / fireRate;
             }
         }
     }
 
-    void Shoot(Vector2 direction)
+    private void Shoot(Vector2 direction)
     {
-        if (projectilePrefab == null || shootPoint == null) return;
+        if (projectilePrefab == null || shootPoint == null)
+            return;
 
-        GameObject bullet = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        GameObject bullet = Instantiate(
+            projectilePrefab,
+            shootPoint.position,
+            Quaternion.identity
+        );
 
-        BulletScript bulletScript = bullet.GetComponent<BulletScript>();
+        Rigidbody2D rb =
+            bullet.GetComponent<Rigidbody2D>();
+
+        BulletScript bulletScript =
+            bullet.GetComponent<BulletScript>();
+
         if (bulletScript != null)
         {
             bulletScript.SetOwner(gameObject);
@@ -79,13 +106,14 @@ public class PlayerShooting : MonoBehaviour
 
         if (rb != null)
         {
-            rb.linearVelocity = direction * bulletSpeed;
+            rb.linearVelocity =
+                direction * bulletSpeed;
         }
     }
 
-    // -------------------------
-    // PUBLIC METHODS FOR POSSESSION
-    // -------------------------
+    //------------------------------------------------
+    // POSSESSION METHODS
+    //------------------------------------------------
 
     public void SetShootingEnabled(bool enabled)
     {
