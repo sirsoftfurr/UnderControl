@@ -7,56 +7,89 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D body;
+    private Animator anim;
 
-    public float speed;
+    [Header("Movement")]
+    public float speed = 5f;
+
+    [Header("Jump")]
     public float jumpForce = 10f;
+    public float jumpTime = 0.2f;
 
+    private float jumpTimeCounter;
+    private bool isJumping;
+
+    [Header("Ground Check")]
     public Transform groundCheck;
     public LayerMask groundMask;
     public Vector2 groundCheckSize = new Vector2(0.2f, 0.2f);
 
-    public float jumpTime = 0.2f;      // how long you can hold jump
-    private float jumpTimeCounter;
-    private bool isJumping;
-
-    private SpriteRenderer sr;
+    [Header("Graphics")]
+    // Drag your rigged character object here
+    public Transform graphics;
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
+
+        // Gets Animator from graphics object
+        anim = graphics.GetComponent<Animator>();
     }
 
     void Update()
     {
         float moveInput = Input.GetAxis("Horizontal");
 
-        // Movement
+        // =========================
+        // MOVEMENT
+        // =========================
+
         body.linearVelocity = new Vector2(
             moveInput * speed,
             body.linearVelocity.y
         );
 
-        // Flip sprite
-        if (moveInput != 0)
+        // =========================
+        // FLIP CHARACTER
+        // =========================
+
+        if (moveInput > 0)
         {
-            sr.flipX = moveInput < 0;
+            graphics.localScale = new Vector3(0.14f,0.14f, 0.14f);
+        }
+        else if (moveInput < 0)
+        {
+            graphics.localScale = new Vector3(-0.14f, 0.14f, 0.14f);
         }
 
-        // Start jump
+        // =========================
+        // START JUMP
+        // =========================
+
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             isJumping = true;
             jumpTimeCounter = jumpTime;
-            body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
+
+            body.linearVelocity = new Vector2(
+                body.linearVelocity.x,
+                jumpForce
+            );
         }
 
-        // Continue jump while holding
+        // =========================
+        // HOLD JUMP
+        // =========================
+
         if (Input.GetButton("Jump") && isJumping)
         {
             if (jumpTimeCounter > 0)
             {
-                body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
+                body.linearVelocity = new Vector2(
+                    body.linearVelocity.x,
+                    jumpForce
+                );
+
                 jumpTimeCounter -= Time.deltaTime;
             }
             else
@@ -65,16 +98,34 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Stop jump early when released
+        // =========================
+        // RELEASE JUMP
+        // =========================
+
         if (Input.GetButtonUp("Jump"))
         {
             isJumping = false;
         }
+
+        // =========================
+        // ANIMATIONS
+        // =========================
+
+        // Movement float
+        anim.SetFloat("Speed", Mathf.Abs(moveInput));
+
+        // Jump bool
+        anim.SetBool("isJumping", !IsGrounded());
     }
 
     bool IsGrounded()
     {
-        return Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0, groundMask);
+        return Physics2D.OverlapBox(
+            groundCheck.position,
+            groundCheckSize,
+            0,
+            groundMask
+        );
     }
 
     void OnDrawGizmosSelected()
@@ -82,7 +133,11 @@ public class PlayerMovement : MonoBehaviour
         if (groundCheck == null) return;
 
         Gizmos.color = Color.white;
-        Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
+
+        Gizmos.DrawWireCube(
+            groundCheck.position,
+            groundCheckSize
+        );
     }
 }
 

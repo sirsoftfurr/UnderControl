@@ -3,36 +3,49 @@ using UnityEngine;
 
 public class PlatformerEnemyAI : MonoBehaviour
 {
-     public Transform player;
+     [Header("Player")]
+    public Transform player;
+
+    [Header("Movement")]
     public float moveSpeed = 3f;
     public float jumpForce = 7f;
 
+    [Header("Ground Check")]
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
 
+    [Header("Graphics")]
+    // Drag your rigged enemy graphics object here
+    public Transform graphics;
+
     private Rigidbody2D rb;
-    private SpriteRenderer sr; // ✅ NEW
+    private Animator anim;
 
     private List<Node> path = new List<Node>();
     private int pathIndex = 0;
 
     private float pathUpdateTimer = 0f;
+
+    [Header("Pathfinding")]
     public float pathUpdateInterval = 0.5f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>(); // ✅ NEW
+
+        // Gets Animator from graphics object
+        anim = graphics.GetComponent<Animator>();
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
+
         if (p != null)
             player = p.transform;
     }
 
     void Update()
     {
-        FacePlayer(); // ✅ Now uses flipX
+        FacePlayer();
 
         pathUpdateTimer += Time.deltaTime;
 
@@ -43,9 +56,13 @@ public class PlatformerEnemyAI : MonoBehaviour
         }
 
         FollowPath();
+
+        UpdateAnimations();
     }
 
-    // ---------------- PATHFINDING ----------------
+    // ==================================================
+    // PATHFINDING
+    // ==================================================
 
     void UpdatePath()
     {
@@ -79,8 +96,11 @@ public class PlatformerEnemyAI : MonoBehaviour
 
             foreach (var node in openSet)
             {
-                if (GetScore(node, target, gScore) < GetScore(current, target, gScore))
+                if (GetScore(node, target, gScore) <
+                    GetScore(current, target, gScore))
+                {
                     current = node;
+                }
             }
 
             if (current == target)
@@ -91,11 +111,18 @@ public class PlatformerEnemyAI : MonoBehaviour
 
             foreach (Node neighbor in current.neighbors)
             {
-                if (closedSet.Contains(neighbor)) continue;
+                if (closedSet.Contains(neighbor))
+                    continue;
 
-                float tentativeG = gScore[current] + Vector2.Distance(current.transform.position, neighbor.transform.position);
+                float tentativeG =
+                    gScore[current] +
+                    Vector2.Distance(
+                        current.transform.position,
+                        neighbor.transform.position
+                    );
 
-                if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
+                if (!gScore.ContainsKey(neighbor) ||
+                    tentativeG < gScore[neighbor])
                 {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeG;
@@ -109,14 +136,30 @@ public class PlatformerEnemyAI : MonoBehaviour
         return new List<Node>();
     }
 
-    float GetScore(Node node, Node target, Dictionary<Node, float> gScore)
+    float GetScore(
+        Node node,
+        Node target,
+        Dictionary<Node, float> gScore
+    )
     {
-        float g = gScore.ContainsKey(node) ? gScore[node] : Mathf.Infinity;
-        float h = Vector2.Distance(node.transform.position, target.transform.position);
+        float g =
+            gScore.ContainsKey(node)
+            ? gScore[node]
+            : Mathf.Infinity;
+
+        float h =
+            Vector2.Distance(
+                node.transform.position,
+                target.transform.position
+            );
+
         return g + h;
     }
 
-    List<Node> RetracePath(Dictionary<Node, Node> cameFrom, Node current)
+    List<Node> RetracePath(
+        Dictionary<Node, Node> cameFrom,
+        Node current
+    )
     {
         List<Node> result = new List<Node>();
 
@@ -139,7 +182,12 @@ public class PlatformerEnemyAI : MonoBehaviour
 
         foreach (Node node in nodes)
         {
-            float dist = Vector2.Distance(position, node.transform.position);
+            float dist =
+                Vector2.Distance(
+                    position,
+                    node.transform.position
+                );
+
             if (dist < minDist)
             {
                 minDist = dist;
@@ -150,26 +198,46 @@ public class PlatformerEnemyAI : MonoBehaviour
         return closest;
     }
 
-    // ---------------- MOVEMENT ----------------
+    // ==================================================
+    // MOVEMENT
+    // ==================================================
 
     void FollowPath()
     {
-        if (path == null || path.Count == 0 || pathIndex >= path.Count)
+        if (path == null ||
+            path.Count == 0 ||
+            pathIndex >= path.Count)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             return;
+        }
 
         Node targetNode = path[pathIndex];
 
-        Vector2 direction = targetNode.transform.position - transform.position;
+        Vector2 direction =
+            targetNode.transform.position - transform.position;
 
         float move = Mathf.Sign(direction.x);
-        rb.linearVelocity = new Vector2(move * moveSpeed, rb.linearVelocity.y);
 
+        rb.linearVelocity = new Vector2(
+            move * moveSpeed,
+            rb.linearVelocity.y
+        );
+
+        // Jump
         if (direction.y > 1f && IsGrounded())
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            rb.linearVelocity = new Vector2(
+                rb.linearVelocity.x,
+                jumpForce
+            );
         }
 
-        if (Vector2.Distance(transform.position, targetNode.transform.position) < 0.3f)
+        // Next node
+        if (Vector2.Distance(
+            transform.position,
+            targetNode.transform.position
+        ) < 0.3f)
         {
             pathIndex++;
         }
@@ -177,18 +245,69 @@ public class PlatformerEnemyAI : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        return Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
     }
 
-    // ---------------- FIXED FLIPPING ----------------
+    // ==================================================
+    // FLIP RIGGED CHARACTER
+    // ==================================================
 
     void FacePlayer()
     {
-        if (player == null || !player.gameObject || sr == null)
+        if (player == null || graphics == null)
             return;
 
-        // ✅ Flip sprite instead of scale
-        sr.flipX = player.position.x < transform.position.x;
+        if (player.position.x < transform.position.x)
+        {
+            graphics.localScale = new Vector3(-0.12f, 0.12f, 0.12f);
+        }
+        else
+        {
+            graphics.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+        }
+    }
+
+    // ==================================================
+    // ANIMATIONS
+    // ==================================================
+
+    void UpdateAnimations()
+    {
+        if (anim == null)
+            return;
+
+        // Float parameter
+        anim.SetFloat(
+            "Speed",
+            Mathf.Abs(rb.linearVelocity.x)
+        );
+
+        // Bool parameter
+        anim.SetBool(
+            "isJumping",
+            !IsGrounded()
+        );
+    }
+
+    // ==================================================
+    // GIZMOS
+    // ==================================================
+
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null)
+            return;
+
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(
+            groundCheck.position,
+            groundCheckRadius
+        );
     }
 }
 
