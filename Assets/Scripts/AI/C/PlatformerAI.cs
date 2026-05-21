@@ -263,11 +263,11 @@ public class PlatformerEnemyAI : MonoBehaviour
 
         if (player.position.x < transform.position.x)
         {
-            graphics.localScale = new Vector3(-0.12f, 0.12f, 0.12f);
+            graphics.localScale = new Vector3(0.12f, 0.12f, 0.12f);
         }
         else
         {
-            graphics.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+            graphics.localScale = new Vector3(-0.12f, 0.12f, 0.12f);
         }
     }
 
