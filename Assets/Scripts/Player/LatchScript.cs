@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class LatchScript : MonoBehaviour
 {
-   [Header("Possession Settings")]
+    [Header("Possession Settings")]
     public float latchRange = 1.5f;
     public LayerMask enemyLayer;
     public Vector2 exitOffset = new Vector2(1f, 0f);
 
     [Header("Player Visuals")]
+    // Drag ONLY the graphics object here
     public GameObject visualsToHide;
 
     [Header("Possession Cooldown")]
@@ -66,7 +67,9 @@ public class LatchScript : MonoBehaviour
         if (enemyCollider == null)
             return;
 
-        GameObject enemy = enemyCollider.gameObject;
+        // ✅ Gets root enemy object
+        GameObject enemy =
+            enemyCollider.transform.root.gameObject;
 
         possessedEnemy = enemy;
 
@@ -121,8 +124,7 @@ public class LatchScript : MonoBehaviour
         // HIDE PLAYER VISUALS
         // =========================================
 
-        if (visualsToHide != null)
-            visualsToHide.SetActive(false);
+        SetVisualsVisible(false);
 
         // =========================================
         // DISABLE PLAYER PHYSICS
@@ -178,10 +180,13 @@ public class LatchScript : MonoBehaviour
         // SHOW POSSESSED ENEMY UI
         // =========================================
 
-        EnemyUI ui = enemy.GetComponent<EnemyUI>();
+        EnemyUI ui =
+            enemy.GetComponentInChildren<EnemyUI>(true);
 
         if (ui != null)
             ui.SetHealthBarVisible(true);
+
+        Debug.Log("Possessed: " + enemy.name);
     }
 
     // ==================================================
@@ -194,7 +199,7 @@ public class LatchScript : MonoBehaviour
             return;
 
         EnemyUI ui =
-            possessedEnemy.GetComponent<EnemyUI>();
+            possessedEnemy.GetComponentInChildren<EnemyUI>(true);
 
         if (ui != null)
             ui.SetHealthBarVisible(false);
@@ -269,8 +274,7 @@ public class LatchScript : MonoBehaviour
         // RESTORE PLAYER VISUALS
         // =========================================
 
-        if (visualsToHide != null)
-            visualsToHide.SetActive(true);
+        SetVisualsVisible(true);
 
         // =========================================
         // RESTORE PLAYER PHYSICS
@@ -304,6 +308,8 @@ public class LatchScript : MonoBehaviour
             }
         }
 
+        Debug.Log("Released: " + possessedEnemy.name);
+
         possessedEnemy = null;
     }
 
@@ -317,7 +323,7 @@ public class LatchScript : MonoBehaviour
             return;
 
         EnemyUI ui =
-            possessedEnemy.GetComponent<EnemyUI>();
+            possessedEnemy.GetComponentInChildren<EnemyUI>(true);
 
         if (ui != null)
             ui.SetHealthBarVisible(false);
@@ -328,8 +334,7 @@ public class LatchScript : MonoBehaviour
             possessedEnemy.transform.position;
 
         // Restore visuals
-        if (visualsToHide != null)
-            visualsToHide.SetActive(true);
+        SetVisualsVisible(true);
 
         // Restore physics
         if (playerCollider != null)
@@ -354,7 +359,27 @@ public class LatchScript : MonoBehaviour
             }
         }
 
+        Debug.Log("Possessed enemy died.");
+
         possessedEnemy = null;
+    }
+
+    // ==================================================
+    // VISUALS
+    // ==================================================
+
+    void SetVisualsVisible(bool visible)
+    {
+        if (visualsToHide == null)
+            return;
+
+        Renderer[] renderers =
+            visualsToHide.GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = visible;
+        }
     }
 
     // ==================================================

@@ -3,89 +3,122 @@ using UnityEngine;
 public class PlayerShooting : MonoBehaviour
 {
     [Header("References")]
-    public Transform bodySprite;    // The visible sprite
-    public Transform gunPivot;      // Rotates toward aim
-    public Transform shootPoint;    // Where bullets come out
+    public Transform bodySprite;
+    public Transform gunPivot;
+    public Transform shootPoint;
     public GameObject projectilePrefab;
 
     [Header("Settings")]
-    public float bulletSpeed = 10f;
     public float fireRate = 5f;
 
     [Header("AI Target (optional)")]
-    public Transform aimTarget;     // If null, use mouse
+    public Transform aimTarget;
 
     private float nextFireTime = 0f;
+
     private bool canShoot = true;
 
-    private SpriteRenderer sr; // ✅ NEW
+    private SpriteRenderer sr;
 
     void Start()
     {
-        // Get SpriteRenderer from bodySprite
         if (bodySprite != null)
             sr = bodySprite.GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        if (!enabled) return;
+        if (!enabled || !canShoot)
+            return;
 
         Vector2 aimDirection;
 
-        // Determine aiming direction
+        // =========================
+        // AIM
+        // =========================
+
         if (aimTarget != null)
         {
-            aimDirection = ((Vector2)aimTarget.position - (Vector2)gunPivot.position).normalized;
+            aimDirection =
+                (
+                    (Vector2)aimTarget.position -
+                    (Vector2)gunPivot.position
+                ).normalized;
         }
         else
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            aimDirection = (mousePos - (Vector2)gunPivot.position).normalized;
+            Vector2 mousePos =
+                Camera.main.ScreenToWorldPoint(
+                    Input.mousePosition
+                );
+
+            aimDirection =
+                (
+                    mousePos -
+                    (Vector2)gunPivot.position
+                ).normalized;
         }
 
-        // Rotate gun pivot toward target
+        // Rotate gun
         gunPivot.up = aimDirection;
 
-        // ✅ FIXED: Flip using SpriteRenderer instead of scale
+        // =========================
+        // FLIP SPRITE
+        // =========================
+
         if (sr != null && aimDirection.x != 0)
         {
             sr.flipX = aimDirection.x < 0;
         }
 
-        // Shoot input (player or AI target)
-        if (canShoot && Time.time >= nextFireTime)
+        // =========================
+        // SHOOT
+        // =========================
+
+        if (Time.time >= nextFireTime)
         {
-            if (aimTarget != null || Input.GetKey(KeyCode.Mouse0))
+            if (aimTarget != null ||
+                Input.GetKey(KeyCode.Mouse0))
             {
                 Shoot(aimDirection);
-                nextFireTime = Time.time + 1f / fireRate;
+
+                nextFireTime =
+                    Time.time + 1f / fireRate;
             }
         }
     }
 
     void Shoot(Vector2 direction)
     {
-        if (projectilePrefab == null || shootPoint == null) return;
+        if (projectilePrefab == null ||
+            shootPoint == null)
+            return;
 
-        GameObject bullet = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        GameObject bullet =
+            Instantiate(
+                projectilePrefab,
+                shootPoint.position,
+                Quaternion.identity
+            );
 
-        BulletScript bulletScript = bullet.GetComponent<BulletScript>();
+        BulletScript bulletScript =
+            bullet.GetComponent<BulletScript>();
+
         if (bulletScript != null)
         {
-            bulletScript.SetOwner(gameObject);
-        }
+            bulletScript.SetDirection(direction);
 
-        if (rb != null)
-        {
-            rb.linearVelocity = direction * bulletSpeed;
+            // IMPORTANT
+            // Uses ROOT object
+            bulletScript.SetOwner(
+                transform.root.gameObject
+            );
         }
     }
 
-    // -------------------------
-    // PUBLIC METHODS FOR POSSESSION
-    // -------------------------
+    // =========================
+    // PUBLIC METHODS
+    // =========================
 
     public void SetShootingEnabled(bool enabled)
     {

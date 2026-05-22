@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D body;
+     private Rigidbody2D body;
     private Animator anim;
 
     [Header("Movement")]
@@ -22,11 +22,15 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public Transform groundCheck;
     public LayerMask groundMask;
-    public Vector2 groundCheckSize = new Vector2(0.2f, 0.2f);
+    public Vector2 groundCheckSize =
+        new Vector2(0.2f, 0.2f);
 
     [Header("Graphics")]
-    // Drag your rigged character object here
+    // Drag rigged graphics object here
     public Transform graphics;
+
+    // Stores original rig scale
+    private Vector3 originalScale;
 
     void Start()
     {
@@ -34,41 +38,58 @@ public class PlayerMovement : MonoBehaviour
 
         // Gets Animator from graphics object
         anim = graphics.GetComponent<Animator>();
+
+        // Save original scale
+        originalScale = graphics.localScale;
     }
 
     void Update()
     {
-        float moveInput = Input.GetAxis("Horizontal");
+        float moveInput =
+            Input.GetAxis("Horizontal");
 
-        // =========================
+        // =====================================
         // MOVEMENT
-        // =========================
+        // =====================================
 
         body.linearVelocity = new Vector2(
             moveInput * speed,
             body.linearVelocity.y
         );
 
-        // =========================
+        // =====================================
         // FLIP CHARACTER
-        // =========================
+        // =====================================
+
+        // Your rig faces LEFT by default,
+        // so we reverse the normal flip.
 
         if (moveInput > 0)
         {
-            graphics.localScale = new Vector3(0.14f,0.14f, 0.14f);
+            graphics.localScale = new Vector3(
+                -Mathf.Abs(originalScale.x),
+                originalScale.y,
+                originalScale.z
+            );
         }
         else if (moveInput < 0)
         {
-            graphics.localScale = new Vector3(-0.14f, 0.14f, 0.14f);
+            graphics.localScale = new Vector3(
+                Mathf.Abs(originalScale.x),
+                originalScale.y,
+                originalScale.z
+            );
         }
 
-        // =========================
+        // =====================================
         // START JUMP
-        // =========================
+        // =====================================
 
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        if (Input.GetButtonDown("Jump") &&
+            IsGrounded())
         {
             isJumping = true;
+
             jumpTimeCounter = jumpTime;
 
             body.linearVelocity = new Vector2(
@@ -77,11 +98,12 @@ public class PlayerMovement : MonoBehaviour
             );
         }
 
-        // =========================
+        // =====================================
         // HOLD JUMP
-        // =========================
+        // =====================================
 
-        if (Input.GetButton("Jump") && isJumping)
+        if (Input.GetButton("Jump") &&
+            isJumping)
         {
             if (jumpTimeCounter > 0)
             {
@@ -98,25 +120,38 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // =========================
+        // =====================================
         // RELEASE JUMP
-        // =========================
+        // =====================================
 
         if (Input.GetButtonUp("Jump"))
         {
             isJumping = false;
         }
 
-        // =========================
+        // =====================================
         // ANIMATIONS
-        // =========================
+        // =====================================
 
-        // Movement float
-        anim.SetFloat("Speed", Mathf.Abs(moveInput));
+        if (anim != null)
+        {
+            // Movement float
+            anim.SetFloat(
+                "Speed",
+                Mathf.Abs(moveInput)
+            );
 
-        // Jump bool
-        anim.SetBool("isJumping", !IsGrounded());
+            // Jump bool
+            anim.SetBool(
+                "isJumping",
+                !IsGrounded()
+            );
+        }
     }
+
+    // =====================================
+    // GROUND CHECK
+    // =====================================
 
     bool IsGrounded()
     {
@@ -128,9 +163,14 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 
+    // =====================================
+    // GIZMOS
+    // =====================================
+
     void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
+        if (groundCheck == null)
+            return;
 
         Gizmos.color = Color.white;
 
@@ -140,5 +180,6 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 }
+
 
 

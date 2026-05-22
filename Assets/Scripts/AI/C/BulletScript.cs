@@ -11,6 +11,18 @@ public class BulletScript : MonoBehaviour
     private Vector2 direction;
     private GameObject owner;
 
+    private Rigidbody2D rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = direction * speed;
+        }
+    }
+
     public void SetDirection(Vector2 dir)
     {
         direction = dir.normalized;
@@ -19,47 +31,57 @@ public class BulletScript : MonoBehaviour
     public void SetOwner(GameObject shooter)
     {
         owner = shooter;
-
-    }
-
-    void Update()
-    {
-        transform.Translate(direction * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject == owner)
+        // Ignore shooter and ALL child colliders
+        if (collision.transform.root.gameObject == owner)
             return;
 
         int layer = collision.gameObject.layer;
 
+        // =========================
+        // HIT DAMAGEABLE TARGET
+        // =========================
+
         if (((1 << layer) & hitLayers) != 0)
         {
-            NewEnemyHealth enemyHealth = collision.GetComponent<NewEnemyHealth>();
+            NewEnemyHealth enemyHealth =
+                collision.GetComponentInParent<NewEnemyHealth>();
 
             if (enemyHealth != null)
             {
                 enemyHealth.TakeDamage(damage);
             }
-            
-            Health playerHealth = collision.GetComponent<Health>();
+
+            Health playerHealth =
+                collision.GetComponentInParent<Health>();
 
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
             }
 
-            // 💥 Spawn blood
-            Raycaster blood = FindObjectOfType<Raycaster>();
+            // Blood effect
+            Raycaster blood =
+                FindObjectOfType<Raycaster>();
+
             if (blood != null)
             {
-                blood.SpawnBlood(transform.position, false);
+                blood.SpawnBlood(
+                    transform.position,
+                    false
+                );
             }
 
             Destroy(gameObject);
             return;
         }
+
+        // =========================
+        // HIT GROUND
+        // =========================
 
         if (((1 << layer) & groundLayer) != 0)
         {
