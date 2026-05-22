@@ -6,6 +6,8 @@ public class EnemyShooter : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float fireRate = 1f;
+    private float nextFireTime;
+
     public float detectionRange = 10f;
 
     public LayerMask targetLayer;
@@ -13,51 +15,116 @@ public class EnemyShooter : MonoBehaviour
 
     public int damage = 20;
 
-    private float nextFireTime;
+    private Transform player;
+
     private bool canShoot = true;
 
-    public void SetShootingEnabled(bool value)
+    public void SetShootingEnabled(bool enabled)
     {
-        canShoot = value;
+        canShoot = enabled;
+    }
+
+    void Start()
+    {
+        GameObject p =
+            GameObject.FindGameObjectWithTag("Player");
+
+        if (p != null)
+            player = p.transform;
     }
 
     void Update()
     {
-        if (!canShoot) return;
+        if (!enabled || !canShoot)
+            return;
 
-        Transform target = LatchScript.ControlledBody;
-        if (target == null || firePoint == null) return;
+        if (player == null)
+            return;
 
-        float dist = Vector2.Distance(transform.position, target.position);
-        if (dist > detectionRange) return;
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                player.position
+            );
 
-        Vector2 dir = (target.position - firePoint.position).normalized;
-
-        RaycastHit2D hit = Physics2D.Raycast(
-            firePoint.position,
-            dir,
-            detectionRange,
-            obstacleLayer | targetLayer
-        );
-
-        if (hit.collider != null &&
-            Time.time >= nextFireTime)
+        if (distance <= detectionRange)
         {
-            Shoot(dir);
-            nextFireTime = Time.time + 1f / fireRate;
+            Vector2 direction =
+                (
+                    player.position -
+                    firePoint.position
+                ).normalized;
+
+            RaycastHit2D hit =
+                Physics2D.Raycast(
+                    firePoint.position,
+                    direction,
+                    detectionRange,
+                    obstacleLayer | targetLayer
+                );
+
+            // =========================
+            // DIRECT PLAYER HIT
+            // =========================
+
+            if (hit.collider != null &&
+                hit.transform.root == player.root)
+            {
+                if (Time.time >= nextFireTime)
+                {
+                    Shoot(direction);
+
+                    nextFireTime =
+                        Time.time + 1f / fireRate;
+                }
+            }
+
+            // =========================
+            // TARGET LAYER HIT
+            // =========================
+
+            if (hit.collider != null)
+            {
+                if (((1 << hit.collider.gameObject.layer)
+                    & targetLayer) != 0)
+                {
+                    if (Time.time >= nextFireTime)
+                    {
+                        Shoot(direction);
+
+                        nextFireTime =
+                            Time.time + 1f / fireRate;
+                    }
+                }
+            }
         }
     }
 
-    void Shoot(Vector2 dir)
+    void Shoot(Vector2 direction)
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        GameObject bullet =
+            Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                Quaternion.identity
+            );
 
-        BulletScript b = bullet.GetComponent<BulletScript>();
-        if (b != null)
+        BulletScript bulletScript =
+            bullet.GetComponent<BulletScript>();
+
+        if (bulletScript != null)
         {
-            b.SetDirection(dir);
-            b.damage = damage;
-            b.SetOwner(gameObject);
+            bulletScript.SetDirection(direction);
+
+            bulletScript.damage = damage;
+
+            // IMPORTANT
+            // Uses ROOT object
+            bulletScript.SetOwner(
+                transform.root.gameObject
+            );
         }
     }
 }
+
+

@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D body;
+     private Rigidbody2D body;
+    private Animator anim;
 
     [Header("Movement")]
     public float speed = 5f;
@@ -15,50 +16,77 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 10f;
     public float jumpTime = 0.2f;
 
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public LayerMask groundMask;
-    public Vector2 groundCheckSize = new Vector2(0.2f, 0.2f);
-
     private float jumpTimeCounter;
     private bool isJumping;
 
-    private void Start()
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public LayerMask groundMask;
+    public Vector2 groundCheckSize =
+        new Vector2(0.2f, 0.2f);
+
+    [Header("Graphics")]
+    // Drag rigged graphics object here
+    public Transform graphics;
+
+    // Stores original rig scale
+    private Vector3 originalScale;
+
+    void Start()
     {
         body = GetComponent<Rigidbody2D>();
+
+        // Gets Animator from graphics object
+        anim = graphics.GetComponent<Animator>();
+
+        // Save original scale
+        originalScale = graphics.localScale;
     }
 
-    private void Update()
+    void Update()
     {
-        //------------------------------------------------
-        // MOVEMENT
-        //------------------------------------------------
+        float moveInput =
+            Input.GetAxis("Horizontal");
 
-        float moveInput = Input.GetAxisRaw("Horizontal");
+        // =====================================
+        // MOVEMENT
+        // =====================================
 
         body.linearVelocity = new Vector2(
             moveInput * speed,
             body.linearVelocity.y
         );
 
-        //------------------------------------------------
-        // CHARACTER FLIP (RIGGED CHARACTER SAFE)
-        //------------------------------------------------
+        // =====================================
+        // FLIP CHARACTER
+        // =====================================
 
-        if (moveInput != 0)
+        // Your rig faces LEFT by default,
+        // so we reverse the normal flip.
+
+        if (moveInput > 0)
         {
-            Vector3 scale = transform.localScale;
-
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
-
-            transform.localScale = scale;
+            graphics.localScale = new Vector3(
+                -Mathf.Abs(originalScale.x),
+                originalScale.y,
+                originalScale.z
+            );
+        }
+        else if (moveInput < 0)
+        {
+            graphics.localScale = new Vector3(
+                Mathf.Abs(originalScale.x),
+                originalScale.y,
+                originalScale.z
+            );
         }
 
-        //------------------------------------------------
+        // =====================================
         // START JUMP
-        //------------------------------------------------
+        // =====================================
 
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        if (Input.GetButtonDown("Jump") &&
+            IsGrounded())
         {
             isJumping = true;
 
@@ -70,11 +98,12 @@ public class PlayerMovement : MonoBehaviour
             );
         }
 
-        //------------------------------------------------
-        // CONTINUE JUMP
-        //------------------------------------------------
+        // =====================================
+        // HOLD JUMP
+        // =====================================
 
-        if (Input.GetButton("Jump") && isJumping)
+        if (Input.GetButton("Jump") &&
+            isJumping)
         {
             if (jumpTimeCounter > 0)
             {
@@ -91,17 +120,40 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        //------------------------------------------------
-        // STOP JUMP EARLY
-        //------------------------------------------------
+        // =====================================
+        // RELEASE JUMP
+        // =====================================
 
         if (Input.GetButtonUp("Jump"))
         {
             isJumping = false;
         }
+
+        // =====================================
+        // ANIMATIONS
+        // =====================================
+
+        if (anim != null)
+        {
+            // Movement float
+            anim.SetFloat(
+                "Speed",
+                Mathf.Abs(moveInput)
+            );
+
+            // Jump bool
+            anim.SetBool(
+                "isJumping",
+                !IsGrounded()
+            );
+        }
     }
 
-    private bool IsGrounded()
+    // =====================================
+    // GROUND CHECK
+    // =====================================
+
+    bool IsGrounded()
     {
         return Physics2D.OverlapBox(
             groundCheck.position,
@@ -111,7 +163,11 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 
-    private void OnDrawGizmosSelected()
+    // =====================================
+    // GIZMOS
+    // =====================================
+
+    void OnDrawGizmosSelected()
     {
         if (groundCheck == null)
             return;
@@ -124,5 +180,6 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 }
+
 
 

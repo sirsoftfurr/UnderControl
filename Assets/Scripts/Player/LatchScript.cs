@@ -1,137 +1,398 @@
-using Unity.Cinemachine;
 using UnityEngine;
-
 
 public class LatchScript : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Possession Settings")]
     public float latchRange = 1.5f;
     public LayerMask enemyLayer;
-    public Vector2 exitOffset = new Vector2(1, 0);
+    public Vector2 exitOffset = new Vector2(1f, 0f);
 
-    [Header("Visuals")]
-    public SpriteRenderer[] spritesToHide;
+    [Header("Player Visuals")]
+    // Drag ONLY the graphics object here
+    public GameObject visualsToHide;
 
-    public static Transform ControlledBody;
-    public static Transform CameraTarget;
+    [Header("Possession Cooldown")]
+    public float possessCooldown = 0.2f;
 
-    private GameObject possessedEnemy;
-    private Rigidbody2D rb;
-    private Collider2D col;
+    [Header("Invisible Layer")]
+    public string invisibleLayerName = "InvisiblePlayer";
 
     private int originalLayer;
-    private float lastTime;
-    public float cooldown = 0.2f;
 
-    private void Start()
+    private GameObject possessedEnemy = null;
+    private float lastPossessTime = -10f;
+
+    private Rigidbody2D rb;
+    private Collider2D playerCollider;
+
+    void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
-
-        ControlledBody = transform;
-        CameraTarget = transform;
-
         originalLayer = gameObject.layer;
+
+        rb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<Collider2D>();
     }
 
-    private void Update()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.E) &&
-            Time.time > lastTime + cooldown)
+            Time.time > lastPossessTime + possessCooldown)
         {
             if (possessedEnemy == null)
+            {
                 TryPossess();
+            }
             else
-                Release();
+            {
+                ReleasePossession();
+            }
 
-            lastTime = Time.time;
+            lastPossessTime = Time.time;
         }
     }
 
-    private void TryPossess()
-    {
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, latchRange, enemyLayer);
-        if (!hit) return;
+    // ==================================================
+    // POSSESS
+    // ==================================================
 
-        GameObject enemy = hit.transform.root.gameObject;
+    void TryPossess()
+    {
+        Collider2D enemyCollider =
+            Physics2D.OverlapCircle(
+                transform.position,
+                latchRange,
+                enemyLayer
+            );
+
+        if (enemyCollider == null)
+            return;
+
+        // ✅ Gets root enemy object
+        GameObject enemy =
+            enemyCollider.transform.root.gameObject;
+
         possessedEnemy = enemy;
 
-        ControlledBody = enemy.transform;
-        CameraTarget = enemy.transform;
+        // =========================================
+        // DISABLE ENEMY AI
+        // =========================================
 
-        // SAFE COMPONENT FETCH (ROOT OR CHILD SAFE)
-        PlatformerAI ai = enemy.GetComponentInChildren<PlatformerAI>();
-        if (ai) ai.enabled = false;
+        PlatformerEnemyAI ai =
+            enemy.GetComponent<PlatformerEnemyAI>();
 
-        EnemyShooter shooter = enemy.GetComponentInChildren<EnemyShooter>();
-        if (shooter)
+        if (ai != null)
+            ai.enabled = false;
+
+        EnemyShooter enemyShooter =
+            enemy.GetComponent<EnemyShooter>();
+
+        if (enemyShooter != null)
         {
-            shooter.SetShootingEnabled(false);
-            shooter.enabled = false;
+            enemyShooter.SetShootingEnabled(false);
+            enemyShooter.enabled = false;
         }
 
-        PlayerMovement pm = enemy.GetComponentInChildren<PlayerMovement>();
-        if (pm) pm.enabled = true;
+        // =========================================
+        // ENABLE PLAYER CONTROL
+        // =========================================
 
-        PlayerShooting ps = enemy.GetComponentInChildren<PlayerShooting>();
-        if (ps)
+        PlayerMovement playerMovement =
+            enemy.GetComponent<PlayerMovement>();
+
+        if (playerMovement != null)
+            playerMovement.enabled = true;
+
+        PlayerShooting playerShooting =
+            enemy.GetComponent<PlayerShooting>();
+
+        if (playerShooting != null)
         {
-            ps.enabled = true;
-            ps.SetShootingEnabled(true);
-            ps.ResetCooldown();
+            playerShooting.enabled = true;
+            playerShooting.SetShootingEnabled(true);
+            playerShooting.ResetCooldown();
         }
 
-        // hide player
+        // =========================================
+        // MOVE PLAYER INTO ENEMY
+        // =========================================
+
+        transform.position = enemy.transform.position;
+
         transform.SetParent(enemy.transform);
-        transform.localPosition = new Vector3(0, -1000f, 0);
 
-        foreach (var s in spritesToHide)
-            if (s) s.enabled = false;
+        // =========================================
+        // HIDE PLAYER VISUALS
+        // =========================================
 
-        if (col) col.enabled = false;
-        if (rb) rb.simulated = false;
+        SetVisualsVisible(false);
 
-        gameObject.layer = LayerMask.NameToLayer("InvisiblePlayer");
+        // =========================================
+        // DISABLE PLAYER PHYSICS
+        // =========================================
+
+        if (playerCollider != null)
+            playerCollider.enabled = false;
+
+        if (rb != null)
+        {
+            rb.simulated = false;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // =========================================
+        // CHANGE PLAYER LAYER
+        // =========================================
+
+        int invisibleLayer =
+            LayerMask.NameToLayer(invisibleLayerName);
+
+        if (invisibleLayer != -1)
+            gameObject.layer = invisibleLayer;
+
+        // =========================================
+        // SUBSCRIBE TO DEATH EVENT
+        // =========================================
+
+        NewEnemyHealth enemyHealth =
+            enemy.GetComponent<NewEnemyHealth>();
+
+        if (enemyHealth != null)
+        {
+            enemyHealth.onDeath.AddListener(
+                OnPossessedEnemyDeath
+            );
+        }
+
+        // =========================================
+        // REDIRECT ENEMY AI TARGETS
+        // =========================================
+
+        foreach (PlatformerEnemyAI otherAI in
+                 FindObjectsOfType<PlatformerEnemyAI>())
+        {
+            if (otherAI.player == transform)
+            {
+                otherAI.player = enemy.transform;
+            }
+        }
+
+        // =========================================
+        // SHOW POSSESSED ENEMY UI
+        // =========================================
+
+        EnemyUI ui =
+            enemy.GetComponentInChildren<EnemyUI>(true);
+
+        if (ui != null)
+            ui.SetHealthBarVisible(true);
+
+        Debug.Log("Possessed: " + enemy.name);
     }
 
-    private void Release()
+    // ==================================================
+    // RELEASE
+    // ==================================================
+
+    void ReleasePossession()
     {
-        if (!possessedEnemy) return;
+        if (possessedEnemy == null)
+            return;
 
-        ControlledBody = transform;
-        CameraTarget = transform;
+        EnemyUI ui =
+            possessedEnemy.GetComponentInChildren<EnemyUI>(true);
 
-        PlatformerAI ai = possessedEnemy.GetComponentInChildren<PlatformerAI>();
-        if (ai) ai.enabled = true;
+        if (ui != null)
+            ui.SetHealthBarVisible(false);
 
-        EnemyShooter shooter = possessedEnemy.GetComponentInChildren<EnemyShooter>();
-        if (shooter)
+        // =========================================
+        // REMOVE DEATH EVENT
+        // =========================================
+
+        NewEnemyHealth enemyHealth =
+            possessedEnemy.GetComponent<NewEnemyHealth>();
+
+        if (enemyHealth != null)
         {
-            shooter.enabled = true;
-            shooter.SetShootingEnabled(true);
+            enemyHealth.onDeath.RemoveListener(
+                OnPossessedEnemyDeath
+            );
         }
 
-        PlayerMovement pm = possessedEnemy.GetComponentInChildren<PlayerMovement>();
-        if (pm) pm.enabled = false;
+        // =========================================
+        // RE-ENABLE AI
+        // =========================================
 
-        PlayerShooting ps = possessedEnemy.GetComponentInChildren<PlayerShooting>();
-        if (ps)
+        PlatformerEnemyAI ai =
+            possessedEnemy.GetComponent<PlatformerEnemyAI>();
+
+        if (ai != null)
+            ai.enabled = true;
+
+        EnemyShooter enemyShooter =
+            possessedEnemy.GetComponent<EnemyShooter>();
+
+        if (enemyShooter != null)
         {
-            ps.enabled = false;
-            ps.SetShootingEnabled(false);
+            enemyShooter.enabled = true;
+            enemyShooter.SetShootingEnabled(true);
         }
+
+        // =========================================
+        // DISABLE PLAYER CONTROL
+        // =========================================
+
+        PlayerMovement playerMovement =
+            possessedEnemy.GetComponent<PlayerMovement>();
+
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+
+        PlayerShooting playerShooting =
+            possessedEnemy.GetComponent<PlayerShooting>();
+
+        if (playerShooting != null)
+        {
+            playerShooting.SetShootingEnabled(false);
+            playerShooting.enabled = false;
+        }
+
+        // =========================================
+        // DETACH PLAYER
+        // =========================================
 
         transform.SetParent(null);
-        transform.position = possessedEnemy.transform.position + (Vector3)exitOffset;
 
-        foreach (var s in spritesToHide)
-            if (s) s.enabled = true;
+        Vector3 exitPosition =
+            possessedEnemy.transform.position +
+            (Vector3)exitOffset;
 
-        if (col) col.enabled = true;
-        if (rb) rb.simulated = true;
+        exitPosition.z = 0f;
+
+        transform.position = exitPosition;
+
+        // =========================================
+        // RESTORE PLAYER VISUALS
+        // =========================================
+
+        SetVisualsVisible(true);
+
+        // =========================================
+        // RESTORE PLAYER PHYSICS
+        // =========================================
+
+        if (playerCollider != null)
+            playerCollider.enabled = true;
+
+        if (rb != null)
+        {
+            rb.simulated = true;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // =========================================
+        // RESTORE PLAYER LAYER
+        // =========================================
 
         gameObject.layer = originalLayer;
 
+        // =========================================
+        // RESTORE AI TARGETS
+        // =========================================
+
+        foreach (PlatformerEnemyAI otherAI in
+                 FindObjectsOfType<PlatformerEnemyAI>())
+        {
+            if (otherAI.player == possessedEnemy.transform)
+            {
+                otherAI.player = transform;
+            }
+        }
+
+        Debug.Log("Released: " + possessedEnemy.name);
+
         possessedEnemy = null;
+    }
+
+    // ==================================================
+    // POSSESSED ENEMY DIED
+    // ==================================================
+
+    void OnPossessedEnemyDeath()
+    {
+        if (possessedEnemy == null)
+            return;
+
+        EnemyUI ui =
+            possessedEnemy.GetComponentInChildren<EnemyUI>(true);
+
+        if (ui != null)
+            ui.SetHealthBarVisible(false);
+
+        transform.SetParent(null);
+
+        transform.position =
+            possessedEnemy.transform.position;
+
+        // Restore visuals
+        SetVisualsVisible(true);
+
+        // Restore physics
+        if (playerCollider != null)
+            playerCollider.enabled = true;
+
+        if (rb != null)
+        {
+            rb.simulated = true;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // Restore layer
+        gameObject.layer = originalLayer;
+
+        // Restore AI targets
+        foreach (PlatformerEnemyAI otherAI in
+                 FindObjectsOfType<PlatformerEnemyAI>())
+        {
+            if (otherAI.player == possessedEnemy.transform)
+            {
+                otherAI.player = transform;
+            }
+        }
+
+        Debug.Log("Possessed enemy died.");
+
+        possessedEnemy = null;
+    }
+
+    // ==================================================
+    // VISUALS
+    // ==================================================
+
+    void SetVisualsVisible(bool visible)
+    {
+        if (visualsToHide == null)
+            return;
+
+        Renderer[] renderers =
+            visualsToHide.GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = visible;
+        }
+    }
+
+    // ==================================================
+    // GIZMOS
+    // ==================================================
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            latchRange
+        );
     }
 }
