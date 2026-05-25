@@ -4,22 +4,46 @@ using UnityEngine.UI;
 
 public class NewEnemyHealth : MonoBehaviour
 {
+    [Header("Health")]
     public int maxHealth = 100;
-    public int currentHealth;
-    public EnemySlider enemyBar;
 
+    private int currentHealth;
+
+    [Header("Death")]
     public UnityEvent onDeath;
+
+    private bool isDead = false;
+
+    [Header("Optional")]
+    public GameObject deathEffect;
 
     void Start()
     {
         currentHealth = maxHealth;
-        enemyBar.SetMaxHealth(maxHealth);
     }
+
+    // ==================================================
+    // DAMAGE
+    // ==================================================
 
     public void TakeDamage(int damage)
     {
-        enemyBar.SetHealth(currentHealth);
+        if (isDead)
+            return;
+
         currentHealth -= damage;
+
+        // Clamp health
+        currentHealth =
+            Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        Debug.Log(
+            gameObject.name +
+            " took damage: " +
+            damage +
+            " | HP: " +
+            currentHealth
+        );
 
         if (currentHealth <= 0)
         {
@@ -27,18 +51,70 @@ public class NewEnemyHealth : MonoBehaviour
         }
     }
 
+    // ==================================================
+    // HEAL
+    // ==================================================
+
+    public void Heal(int amount)
+    {
+        if (isDead)
+            return;
+
+        currentHealth += amount;
+
+        currentHealth =
+            Mathf.Clamp(currentHealth, 0, maxHealth);
+    }
+
+    // ==================================================
+    // DIE
+    // ==================================================
+
     void Die()
     {
-        foreach (var ai in FindObjectsOfType<PlatformerAI>())
+        if (isDead)
+            return;
+
+        isDead = true;
+
+        Debug.Log(gameObject.name + " died");
+
+        // Invoke death event
+        if (onDeath != null)
         {
-            if (ai.target == transform)
-            {
-                ai.target = null;
-            }
+            onDeath.Invoke();
         }
 
-        onDeath?.Invoke();
+        // Optional effect
+        if (deathEffect != null)
+        {
+            Instantiate(
+                deathEffect,
+                transform.position,
+                Quaternion.identity
+            );
+        }
+
         Destroy(gameObject);
+    }
+
+    // ==================================================
+    // GETTERS
+    // ==================================================
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    public float GetHealthPercent()
+    {
+        return (float)currentHealth / maxHealth;
     }
 }
 

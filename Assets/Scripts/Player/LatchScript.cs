@@ -7,8 +7,11 @@ public class LatchScript : MonoBehaviour
     public LayerMask enemyLayer;
     public Vector2 exitOffset = new Vector2(1f, 0f);
 
+    // Camera + AI target
+    public static Transform currentTarget;
+
     [Header("Player Visuals")]
-    // Drag ONLY the graphics object here
+    // Drag ONLY the player graphics object here
     public GameObject visualsToHide;
 
     [Header("Possession Cooldown")]
@@ -25,12 +28,20 @@ public class LatchScript : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D playerCollider;
 
+    private Vector3 originalScale;
+    private Vector3 storedPlayerPosition;
+
     void Start()
     {
         originalLayer = gameObject.layer;
 
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
+
+        originalScale = transform.localScale;
+
+        // Default camera/AI target = player
+        currentTarget = transform;
     }
 
     void Update()
@@ -67,11 +78,14 @@ public class LatchScript : MonoBehaviour
         if (enemyCollider == null)
             return;
 
-        // ✅ Gets root enemy object
+        // Get root enemy object
         GameObject enemy =
             enemyCollider.transform.root.gameObject;
 
         possessedEnemy = enemy;
+
+        // Camera + AI now follow possessed enemy
+        currentTarget = enemy.transform;
 
         // =========================================
         // DISABLE ENEMY AI
@@ -93,14 +107,19 @@ public class LatchScript : MonoBehaviour
         }
 
         // =========================================
-        // ENABLE PLAYER CONTROL
+        // ENABLE PLAYER CONTROL ON ENEMY
         // =========================================
 
         PlayerMovement playerMovement =
             enemy.GetComponent<PlayerMovement>();
 
         if (playerMovement != null)
+        {
             playerMovement.enabled = true;
+
+            // Possessed enemy faces mouse
+            playerMovement.faceMouse = true;
+        }
 
         PlayerShooting playerShooting =
             enemy.GetComponent<PlayerShooting>();
@@ -116,9 +135,15 @@ public class LatchScript : MonoBehaviour
         // MOVE PLAYER INTO ENEMY
         // =========================================
 
-        transform.position = enemy.transform.position;
+        storedPlayerPosition = transform.position;
 
         transform.SetParent(enemy.transform);
+
+        // Keep hidden player centered
+        transform.localPosition = Vector3.zero;
+
+        // Prevent inheriting enemy scale
+        transform.localScale = originalScale;
 
         // =========================================
         // HIDE PLAYER VISUALS
@@ -150,7 +175,7 @@ public class LatchScript : MonoBehaviour
             gameObject.layer = invisibleLayer;
 
         // =========================================
-        // SUBSCRIBE TO DEATH EVENT
+        // SUBSCRIBE TO ENEMY DEATH
         // =========================================
 
         NewEnemyHealth enemyHealth =
@@ -164,7 +189,7 @@ public class LatchScript : MonoBehaviour
         }
 
         // =========================================
-        // REDIRECT ENEMY AI TARGETS
+        // REDIRECT AI TARGETS
         // =========================================
 
         foreach (PlatformerEnemyAI otherAI in
@@ -245,7 +270,10 @@ public class LatchScript : MonoBehaviour
             possessedEnemy.GetComponent<PlayerMovement>();
 
         if (playerMovement != null)
+        {
+            playerMovement.faceMouse = false;
             playerMovement.enabled = false;
+        }
 
         PlayerShooting playerShooting =
             possessedEnemy.GetComponent<PlayerShooting>();
@@ -261,6 +289,8 @@ public class LatchScript : MonoBehaviour
         // =========================================
 
         transform.SetParent(null);
+
+        transform.localScale = originalScale;
 
         Vector3 exitPosition =
             possessedEnemy.transform.position +
@@ -308,6 +338,9 @@ public class LatchScript : MonoBehaviour
             }
         }
 
+        // Camera returns to player
+        currentTarget = transform;
+
         Debug.Log("Released: " + possessedEnemy.name);
 
         possessedEnemy = null;
@@ -328,15 +361,32 @@ public class LatchScript : MonoBehaviour
         if (ui != null)
             ui.SetHealthBarVisible(false);
 
+        // =========================================
+        // DETACH PLAYER
+        // =========================================
+
         transform.SetParent(null);
 
-        transform.position =
-            possessedEnemy.transform.position;
+        transform.localScale = originalScale;
 
-        // Restore visuals
+        Vector3 exitPosition =
+            possessedEnemy.transform.position +
+            (Vector3)exitOffset;
+
+        exitPosition.z = 0f;
+
+        transform.position = exitPosition;
+
+        // =========================================
+        // RESTORE VISUALS
+        // =========================================
+
         SetVisualsVisible(true);
 
-        // Restore physics
+        // =========================================
+        // RESTORE PHYSICS
+        // =========================================
+
         if (playerCollider != null)
             playerCollider.enabled = true;
 
@@ -346,10 +396,16 @@ public class LatchScript : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
         }
 
-        // Restore layer
+        // =========================================
+        // RESTORE LAYER
+        // =========================================
+
         gameObject.layer = originalLayer;
 
-        // Restore AI targets
+        // =========================================
+        // RESTORE AI TARGETS
+        // =========================================
+
         foreach (PlatformerEnemyAI otherAI in
                  FindObjectsOfType<PlatformerEnemyAI>())
         {
@@ -359,7 +415,10 @@ public class LatchScript : MonoBehaviour
             }
         }
 
-        Debug.Log("Possessed enemy died.");
+        // Camera returns to player
+        currentTarget = transform;
+
+        Debug.Log("Possessed enemy died");
 
         possessedEnemy = null;
     }

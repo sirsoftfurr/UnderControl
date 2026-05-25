@@ -173,7 +173,7 @@ MonoBehaviour:
   damage: 5
   hitLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

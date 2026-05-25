@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-     private Rigidbody2D body;
+    private Rigidbody2D body;
     private Animator anim;
 
     [Header("Movement")]
@@ -21,26 +21,31 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")]
     public Transform groundCheck;
+
     public LayerMask groundMask;
+
     public Vector2 groundCheckSize =
         new Vector2(0.2f, 0.2f);
 
     [Header("Graphics")]
-    // Drag rigged graphics object here
+    // Drag your rigged graphics object here
     public Transform graphics;
 
-    // Stores original rig scale
+    // If true, face mouse instead of movement
+    [HideInInspector]
+    public bool faceMouse = false;
+
     private Vector3 originalScale;
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
 
-        // Gets Animator from graphics object
-        anim = graphics.GetComponent<Animator>();
-
-        // Save original scale
-        originalScale = graphics.localScale;
+        if (graphics != null)
+        {
+            anim = graphics.GetComponent<Animator>();
+            originalScale = graphics.localScale;
+        }
     }
 
     void Update()
@@ -61,24 +66,68 @@ public class PlayerMovement : MonoBehaviour
         // FLIP CHARACTER
         // =====================================
 
-        // Your rig faces LEFT by default,
-        // so we reverse the normal flip.
+        if (graphics != null)
+        {
+            // =================================
+            // FACE MOUSE
+            // =================================
 
-        if (moveInput > 0)
-        {
-            graphics.localScale = new Vector3(
-                -Mathf.Abs(originalScale.x),
-                originalScale.y,
-                originalScale.z
-            );
-        }
-        else if (moveInput < 0)
-        {
-            graphics.localScale = new Vector3(
-                Mathf.Abs(originalScale.x),
-                originalScale.y,
-                originalScale.z
-            );
+            if (faceMouse)
+            {
+                Vector3 mousePos =
+                    Camera.main.ScreenToWorldPoint(
+                        Input.mousePosition
+                    );
+
+                mousePos.z = 0f;
+
+                // Mouse RIGHT
+                if (mousePos.x > transform.position.x)
+                {
+                    graphics.localScale = new Vector3(
+                        -Mathf.Abs(originalScale.x),
+                        originalScale.y,
+                        originalScale.z
+                    );
+                }
+
+                // Mouse LEFT
+                else
+                {
+                    graphics.localScale = new Vector3(
+                        Mathf.Abs(originalScale.x),
+                        originalScale.y,
+                        originalScale.z
+                    );
+                }
+            }
+
+            // =================================
+            // FACE MOVEMENT
+            // =================================
+
+            else
+            {
+                // Moving RIGHT
+                if (moveInput > 0)
+                {
+                    graphics.localScale = new Vector3(
+                        Mathf.Abs(originalScale.x),
+                        originalScale.y,
+                        originalScale.z
+                    );
+                }
+
+                // Moving LEFT
+                else if (moveInput < 0)
+                {
+                    graphics.localScale = new Vector3(
+                        -Mathf.Abs(originalScale.x),
+                        originalScale.y,
+                        originalScale.z
+                    );
+                }
+            }
         }
 
         // =====================================
@@ -155,6 +204,9 @@ public class PlayerMovement : MonoBehaviour
 
     bool IsGrounded()
     {
+        if (groundCheck == null)
+            return false;
+
         return Physics2D.OverlapBox(
             groundCheck.position,
             groundCheckSize,

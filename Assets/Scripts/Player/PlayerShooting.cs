@@ -3,39 +3,36 @@ using UnityEngine;
 public class PlayerShooting : MonoBehaviour
 {
     [Header("References")]
-    public Transform bodySprite;
-    public Transform gunPivot;
-    public Transform shootPoint;
+    public Transform bodySprite;        // Visual body
+    public Transform gunPivot;          // Rotates toward aim
+    public Transform shootPoint;        // Bullet spawn point
     public GameObject projectilePrefab;
 
     [Header("Settings")]
+    public float bulletSpeed = 10f;
     public float fireRate = 5f;
 
     [Header("AI Target (optional)")]
+    // If assigned, AI shoots this target
+    // Otherwise player uses mouse
     public Transform aimTarget;
 
     private float nextFireTime = 0f;
-
     private bool canShoot = true;
 
-    private SpriteRenderer sr;
-
-    void Start()
-    {
-        if (bodySprite != null)
-            sr = bodySprite.GetComponent<SpriteRenderer>();
-    }
-
-    void Update()
+    private void Update()
     {
         if (!enabled || !canShoot)
             return;
 
+        if (gunPivot == null || shootPoint == null)
+            return;
+
         Vector2 aimDirection;
 
-        // =========================
-        // AIM
-        // =========================
+        // =====================================
+        // AI AIMING
+        // =====================================
 
         if (aimTarget != null)
         {
@@ -45,40 +42,50 @@ public class PlayerShooting : MonoBehaviour
                     (Vector2)gunPivot.position
                 ).normalized;
         }
+
+        // =====================================
+        // PLAYER AIMING
+        // =====================================
+
         else
         {
-            Vector2 mousePos =
+            Vector3 mouseWorld =
                 Camera.main.ScreenToWorldPoint(
                     Input.mousePosition
                 );
 
+            mouseWorld.z = 0f;
+
             aimDirection =
                 (
-                    mousePos -
+                    (Vector2)mouseWorld -
                     (Vector2)gunPivot.position
                 ).normalized;
         }
 
-        // Rotate gun
-        gunPivot.up = aimDirection;
+        // =====================================
+        // ROTATE GUN
+        // =====================================
 
-        // =========================
-        // FLIP SPRITE
-        // =========================
+        gunPivot.right = aimDirection;
 
-        if (sr != null && aimDirection.x != 0)
-        {
-            sr.flipX = aimDirection.x < 0;
-        }
-
-        // =========================
-        // SHOOT
-        // =========================
+        // =====================================
+        // SHOOT INPUT
+        // =====================================
 
         if (Time.time >= nextFireTime)
         {
-            if (aimTarget != null ||
-                Input.GetKey(KeyCode.Mouse0))
+            // AI shooting
+            if (aimTarget != null)
+            {
+                Shoot(aimDirection);
+
+                nextFireTime =
+                    Time.time + 1f / fireRate;
+            }
+
+            // Player shooting
+            else if (Input.GetMouseButton(0))
             {
                 Shoot(aimDirection);
 
@@ -88,10 +95,13 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
+    // ==================================================
+    // SHOOT
+    // ==================================================
+
     void Shoot(Vector2 direction)
     {
-        if (projectilePrefab == null ||
-            shootPoint == null)
+        if (projectilePrefab == null)
             return;
 
         GameObject bullet =
@@ -101,6 +111,10 @@ public class PlayerShooting : MonoBehaviour
                 Quaternion.identity
             );
 
+        // =====================================
+        // BULLET SCRIPT
+        // =====================================
+
         BulletScript bulletScript =
             bullet.GetComponent<BulletScript>();
 
@@ -108,17 +122,28 @@ public class PlayerShooting : MonoBehaviour
         {
             bulletScript.SetDirection(direction);
 
-            // IMPORTANT
-            // Uses ROOT object
-            bulletScript.SetOwner(
-                transform.root.gameObject
-            );
+            // VERY IMPORTANT
+            // prevents self collision
+            bulletScript.SetOwner(transform.root.gameObject);
+        }
+
+        // =====================================
+        // RIGIDBODY MOVEMENT
+        // =====================================
+
+        Rigidbody2D rb =
+            bullet.GetComponent<Rigidbody2D>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity =
+                direction * bulletSpeed;
         }
     }
 
-    // =========================
+    // ==================================================
     // PUBLIC METHODS
-    // =========================
+    // ==================================================
 
     public void SetShootingEnabled(bool enabled)
     {

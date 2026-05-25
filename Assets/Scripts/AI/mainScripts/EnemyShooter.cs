@@ -38,6 +38,9 @@ public class EnemyShooter : MonoBehaviour
         if (!enabled || !canShoot)
             return;
 
+        // ALWAYS use current possession target
+        player = LatchScript.currentTarget;
+
         if (player == null)
             return;
 
@@ -50,10 +53,7 @@ public class EnemyShooter : MonoBehaviour
         if (distance <= detectionRange)
         {
             Vector2 direction =
-                (
-                    player.position -
-                    firePoint.position
-                ).normalized;
+                (player.position - firePoint.position).normalized;
 
             RaycastHit2D hit =
                 Physics2D.Raycast(
@@ -63,12 +63,8 @@ public class EnemyShooter : MonoBehaviour
                     obstacleLayer | targetLayer
                 );
 
-            // =========================
-            // DIRECT PLAYER HIT
-            // =========================
-
             if (hit.collider != null &&
-                hit.transform.root == player.root)
+                hit.transform == player)
             {
                 if (Time.time >= nextFireTime)
                 {
@@ -76,25 +72,6 @@ public class EnemyShooter : MonoBehaviour
 
                     nextFireTime =
                         Time.time + 1f / fireRate;
-                }
-            }
-
-            // =========================
-            // TARGET LAYER HIT
-            // =========================
-
-            if (hit.collider != null)
-            {
-                if (((1 << hit.collider.gameObject.layer)
-                    & targetLayer) != 0)
-                {
-                    if (Time.time >= nextFireTime)
-                    {
-                        Shoot(direction);
-
-                        nextFireTime =
-                            Time.time + 1f / fireRate;
-                    }
                 }
             }
         }
