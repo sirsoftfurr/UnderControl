@@ -52,17 +52,20 @@ TagManager:
   - name: Ground Details
     uniqueID: 3429328577
     locked: 0
-  - name: Props
-    uniqueID: 2030438697
-    locked: 0
   - name: Charaters
     uniqueID: 1681219085
+    locked: 0
+  - name: Props
+    uniqueID: 2030438697
     locked: 0
   - name: VFX
     uniqueID: 4015421713
     locked: 0
   - name: UI
     uniqueID: 3554587079
+    locked: 0
+  - name: Foreground
+    uniqueID: 2062336575
     locked: 0
   m_RenderingLayers:
   - Default
