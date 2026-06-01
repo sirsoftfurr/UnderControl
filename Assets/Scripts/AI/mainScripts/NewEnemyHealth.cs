@@ -14,14 +14,23 @@ public class NewEnemyHealth : MonoBehaviour
 
     private bool isDead = false;
 
+    [Header("UI")]
+    public EnemySlider healthUI;
+
     [Header("Optional")]
     public GameObject deathEffect;
 
     void Start()
     {
+        if (healthUI == null)
+            healthUI = FindObjectOfType<EnemySlider>();
+        
+        healthUI.SetMaxHealth(maxHealth);
+    }
+    private void Awake()
+    {
         currentHealth = maxHealth;
     }
-
     // ==================================================
     // DAMAGE
     // ==================================================
@@ -33,39 +42,20 @@ public class NewEnemyHealth : MonoBehaviour
 
         currentHealth -= damage;
 
-        // Clamp health
         currentHealth =
             Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        Debug.Log(
-            gameObject.name +
-            " took damage: " +
-            damage +
-            " | HP: " +
-            currentHealth
-        );
+        // THIS IS THE IMPORTANT PART
+        if (healthUI != null)
+        {
+            healthUI.SetHealth(currentHealth);
+        }
 
         if (currentHealth <= 0)
         {
             Die();
         }
     }
-
-    // ==================================================
-    // HEAL
-    // ==================================================
-
-    public void Heal(int amount)
-    {
-        if (isDead)
-            return;
-
-        currentHealth += amount;
-
-        currentHealth =
-            Mathf.Clamp(currentHealth, 0, maxHealth);
-    }
-
     // ==================================================
     // DIE
     // ==================================================
@@ -79,13 +69,11 @@ public class NewEnemyHealth : MonoBehaviour
 
         Debug.Log(gameObject.name + " died");
 
-        // Invoke death event
         if (onDeath != null)
         {
             onDeath.Invoke();
         }
 
-        // Optional effect
         if (deathEffect != null)
         {
             Instantiate(

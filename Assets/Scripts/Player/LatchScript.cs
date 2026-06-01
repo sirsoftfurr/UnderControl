@@ -60,6 +60,20 @@ public class LatchScript : MonoBehaviour
 
             lastPossessTime = Time.time;
         }
+        
+    }
+    void LateUpdate()
+    {
+        if (possessedEnemy != null)
+        {
+            // Force hidden player to EXACT center
+            // of possessed enemy every frame
+            transform.position =
+                possessedEnemy.transform.position;
+
+            transform.rotation =
+                Quaternion.identity;
+        }
     }
 
     // ==================================================
@@ -86,6 +100,9 @@ public class LatchScript : MonoBehaviour
 
         // Camera + AI now follow possessed enemy
         currentTarget = enemy.transform;
+        Debug.Log(
+            "Current Target: " +
+            currentTarget.name);
 
         // =========================================
         // DISABLE ENEMY AI
@@ -138,10 +155,12 @@ public class LatchScript : MonoBehaviour
         storedPlayerPosition = transform.position;
 
         transform.SetParent(enemy.transform);
-
-        // Keep hidden player centered
+        
+        // Keep hidden player INSIDE possessed enemy
+        // so enemy AI/raycast tracks correctly
+        
         transform.localPosition = Vector3.zero;
-
+        
         // Prevent inheriting enemy scale
         transform.localScale = originalScale;
 

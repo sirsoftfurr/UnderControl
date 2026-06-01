@@ -1,26 +1,63 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [Header("References")]
-    public Transform bodySprite;        // Visual body
-    public Transform gunPivot;          // Rotates toward aim
-    public Transform shootPoint;        // Bullet spawn point
+     [Header("References")]
+    public Transform bodySprite;
+    public Transform gunPivot;
+    public Transform shootPoint;
+
     public GameObject projectilePrefab;
 
     [Header("Settings")]
     public float bulletSpeed = 10f;
     public float fireRate = 5f;
 
+    [Header("Ammo")]
+    public int maxAmmo = 12;
+
+    private int currentAmmo;
+
+    [Header("Shotgun")]
+    public bool isShotgun = false;
+
+    public int pelletCount = 6;
+
+    public float spreadAngle = 20f;
+
+    [Header("Muzzle Flash")]
+    public GameObject muzzleFlash;
+
+    public float muzzleFlashTime = 0.05f;
+
     [Header("AI Target (optional)")]
-    // If assigned, AI shoots this target
-    // Otherwise player uses mouse
     public Transform aimTarget;
 
     private float nextFireTime = 0f;
+
     private bool canShoot = true;
 
-    private void Update()
+    // ==================================================
+    // START
+    // ==================================================
+
+    void Start()
+    {
+        currentAmmo = maxAmmo;
+
+        if (muzzleFlash != null)
+        {
+            muzzleFlash.SetActive(false);
+        }
+    }
+
+    // ==================================================
+    // UPDATE
+    // ==================================================
+
+    void Update()
     {
         if (!enabled || !canShoot)
             return;
@@ -75,24 +112,36 @@ public class PlayerShooting : MonoBehaviour
 
         if (Time.time >= nextFireTime)
         {
-            // AI shooting
+            // AI SHOOTING
             if (aimTarget != null)
             {
-                Shoot(aimDirection);
-
-                nextFireTime =
-                    Time.time + 1f / fireRate;
+                TryShoot(aimDirection);
             }
 
-            // Player shooting
+            // PLAYER SHOOTING
             else if (Input.GetMouseButton(0))
             {
-                Shoot(aimDirection);
-
-                nextFireTime =
-                    Time.time + 1f / fireRate;
+                TryShoot(aimDirection);
             }
         }
+    }
+
+    // ==================================================
+    // TRY SHOOT
+    // ==================================================
+
+    void TryShoot(Vector2 direction)
+    {
+        // No ammo
+        if (currentAmmo <= 0)
+            return;
+
+        Shoot(direction);
+
+        currentAmmo--;
+
+        nextFireTime =
+            Time.time + 1f / fireRate;
     }
 
     // ==================================================
@@ -100,6 +149,54 @@ public class PlayerShooting : MonoBehaviour
     // ==================================================
 
     void Shoot(Vector2 direction)
+    {
+        // =====================================
+        // NORMAL GUN
+        // =====================================
+
+        if (!isShotgun)
+        {
+            SpawnBullet(direction);
+        }
+
+        // =====================================
+        // SHOTGUN
+        // =====================================
+
+        else
+        {
+            float startAngle =
+                -spreadAngle / 2f;
+
+            float angleStep =
+                spreadAngle /
+                (pelletCount - 1);
+
+            for (int i = 0; i < pelletCount; i++)
+            {
+                float angle =
+                    startAngle +
+                    angleStep * i;
+
+                Vector2 spreadDirection =
+                    Quaternion.Euler(
+                        0,
+                        0,
+                        angle
+                    ) * direction;
+
+                SpawnBullet(spreadDirection);
+            }
+        }
+
+        StartCoroutine(FlashMuzzle());
+    }
+
+    // ==================================================
+    // SPAWN BULLET
+    // ==================================================
+
+    void SpawnBullet(Vector2 direction)
     {
         if (projectilePrefab == null)
             return;
@@ -122,9 +219,10 @@ public class PlayerShooting : MonoBehaviour
         {
             bulletScript.SetDirection(direction);
 
-            // VERY IMPORTANT
-            // prevents self collision
-            bulletScript.SetOwner(transform.root.gameObject);
+            // Prevent self collision
+            bulletScript.SetOwner(
+                transform.root.gameObject
+            );
         }
 
         // =====================================
@@ -142,6 +240,25 @@ public class PlayerShooting : MonoBehaviour
     }
 
     // ==================================================
+    // MUZZLE FLASH
+    // ==================================================
+
+    IEnumerator FlashMuzzle()
+    {
+        if (muzzleFlash == null)
+            yield break;
+
+        muzzleFlash.SetActive(true);
+
+        yield return new WaitForSeconds(
+            muzzleFlashTime
+        );
+
+        muzzleFlash.SetActive(false);
+    }
+
+
+    // ==================================================
     // PUBLIC METHODS
     // ==================================================
 
@@ -153,5 +270,17 @@ public class PlayerShooting : MonoBehaviour
     public void ResetCooldown()
     {
         nextFireTime = 0f;
+    }
+
+    // Refill ammo when possessing new enemy
+    public void RefillAmmo()
+    {
+        currentAmmo = maxAmmo;
+    }
+
+    // Get current ammo for UI
+    public int GetAmmo()
+    {
+        return currentAmmo;
     }
 }
