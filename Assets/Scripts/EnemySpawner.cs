@@ -1,35 +1,38 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [System.Serializable]
+   [System.Serializable]
     public class EnemySpawnData
     {
         [Header("Enemy")]
         public GameObject enemyPrefab;
 
-        [Header("Spawn Chance")]
+        [Header("Spawn Weight")]
         [Range(1, 100)]
         public int spawnWeight = 10;
     }
 
-    [Header("Spawn Settings")]
+    [Header("Enemies")]
     public List<EnemySpawnData> enemies =
         new List<EnemySpawnData>();
 
-    [Header("Population Control")]
+    [Header("Population")]
     public int maxEnemies = 10;
 
     public float checkInterval = 2f;
 
-    [Header("Spawn Area")]
+    [Header("Spawn Points")]
     public Transform[] spawnPoints;
 
     [Header("Enemy Tag")]
     public string enemyTag = "Enemy";
 
     private float nextCheckTime;
+
+    private bool isSpawning = false;
 
     // ==================================================
     // UPDATE
@@ -39,53 +42,55 @@ public class EnemySpawner : MonoBehaviour
     {
         if (Time.time >= nextCheckTime)
         {
-            CheckEnemyCount();
-
             nextCheckTime =
                 Time.time + checkInterval;
+
+            CheckEnemies();
         }
     }
 
     // ==================================================
-    // CHECK ENEMY COUNT
+    // CHECK ENEMIES
     // ==================================================
 
-    void CheckEnemyCount()
+    void CheckEnemies()
     {
-        GameObject[] currentEnemies =
+        if (isSpawning)
+            return;
+
+        GameObject[] enemiesInScene =
             GameObject.FindGameObjectsWithTag(
                 enemyTag
             );
 
-        int aliveEnemies =
-            currentEnemies.Length;
+        int currentEnemyCount =
+            enemiesInScene.Length;
 
-        // =========================================
-        // SPAWN MISSING ENEMIES
-        // =========================================
+        // Already enough enemies
+        if (currentEnemyCount >= maxEnemies)
+            return;
 
-        while (aliveEnemies < maxEnemies)
-        {
-            SpawnEnemy();
-
-            aliveEnemies++;
-        }
+        // Spawn only ONE at a time
+        StartCoroutine(SpawnEnemyRoutine());
     }
 
     // ==================================================
-    // SPAWN ENEMY
+    // SPAWN ROUTINE
     // ==================================================
 
-    void SpawnEnemy()
+    IEnumerator SpawnEnemyRoutine()
     {
+        isSpawning = true;
+
+        // =====================================
+        // PICK RANDOM SPAWN POINT
+        // =====================================
+
         if (spawnPoints.Length == 0)
-            return;
-
-        GameObject enemyPrefab =
-            GetRandomEnemy();
-
-        if (enemyPrefab == null)
-            return;
+        {
+            isSpawning = false;
+            yield break;
+        }
 
         Transform spawnPoint =
             spawnPoints[
@@ -95,15 +100,44 @@ public class EnemySpawner : MonoBehaviour
                 )
             ];
 
-        Instantiate(
-            enemyPrefab,
-            spawnPoint.position,
-            Quaternion.identity
-        );
+        // =====================================
+        // OPEN DOOR
+        // =====================================
+
+        SpawnDoor door =
+            spawnPoint.GetComponentInChildren<SpawnDoor>();
+
+        if (door != null)
+        {
+            yield return StartCoroutine(
+                door.OpenDoor()
+            );
+        }
+
+        // =====================================
+        // PICK RANDOM ENEMY
+        // =====================================
+
+        GameObject enemyPrefab =
+            GetRandomEnemy();
+
+        if (enemyPrefab != null)
+        {
+            Instantiate(
+                enemyPrefab,
+                spawnPoint.position,
+                Quaternion.identity
+            );
+        }
+
+        // Small delay
+        yield return new WaitForSeconds(0.1f);
+
+        isSpawning = false;
     }
 
     // ==================================================
-    // WEIGHTED RANDOM ENEMY
+    // WEIGHTED RANDOM
     // ==================================================
 
     GameObject GetRandomEnemy()
@@ -142,10 +176,10 @@ public class EnemySpawner : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        Gizmos.color = Color.green;
+
         if (spawnPoints == null)
             return;
-
-        Gizmos.color = Color.green;
 
         foreach (Transform point in spawnPoints)
         {

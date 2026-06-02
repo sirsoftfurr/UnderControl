@@ -1096,7 +1096,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8653719598885068355, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: -8632462148259693085, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
       propertyPath: m_Layer
