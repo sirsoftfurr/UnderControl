@@ -31,6 +31,11 @@ public class PlayerShooting : MonoBehaviour
     public GameObject muzzleFlash;
 
     public float muzzleFlashTime = 0.05f;
+    
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip shootSound;
 
     [Header("AI Target (optional)")]
     public Transform aimTarget;
@@ -151,6 +156,17 @@ public class PlayerShooting : MonoBehaviour
     void Shoot(Vector2 direction)
     {
         GameStats.instance.bulletsFired++;
+        
+        if (audioSource != null &&
+            shootSound != null)
+        {
+            audioSource.pitch =
+                Random.Range(0.95f, 1.05f);
+            
+            audioSource.PlayOneShot(
+                shootSound
+            );
+        }
         
         // =====================================
         // NORMAL GUN

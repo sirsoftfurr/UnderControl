@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class SpawnDoor : MonoBehaviour
 {
-    [Header("Door Objects")] public GameObject closedDoor;
+    [Header("Door Objects")] 
+    public GameObject closedDoor;
 
     public GameObject openDoor;
 
-    [Header("Settings")] public float openTime = 1f;
+    [Header("Settings")] 
+    public float openTime = 1f;
+    
+    [Header("Audio")] 
+    public AudioSource audioSource;
+    public AudioClip openSound;
 
     void Start()
     {
@@ -35,6 +41,15 @@ public class SpawnDoor : MonoBehaviour
 
         if (openDoor != null)
             openDoor.SetActive(true);
+
+        if (audioSource != null && openSound != null)
+        {
+            audioSource.pitch =
+                Random.Range(0.95f, 1.05f);
+
+            audioSource.PlayOneShot(
+                openSound);
+        }
 
         // =====================================
         // WAIT

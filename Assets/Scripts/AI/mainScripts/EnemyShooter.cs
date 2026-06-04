@@ -21,6 +21,11 @@ public class EnemyShooter : MonoBehaviour
     public int pelletCount = 6;
 
     public float spreadAngle = 20f;
+    
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip shootSound;
 
     [Header("Detection")]
     public float detectionRange = 10f;
@@ -153,6 +158,17 @@ public class EnemyShooter : MonoBehaviour
 
     void Shoot(Vector2 direction)
     {
+        if (audioSource != null &&
+            shootSound != null)
+        {
+            audioSource.pitch =
+                Random.Range(0.95f, 1.05f);
+            
+            audioSource.PlayOneShot(
+                shootSound
+            );
+        }
+        
         if (bulletPrefab == null ||
             firePoint == null)
             return;
