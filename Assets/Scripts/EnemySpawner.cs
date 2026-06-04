@@ -29,6 +29,12 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Enemy Tag")]
     public string enemyTag = "Enemy";
+    
+    [HideInInspector]
+    public int currentRound = 1;
+
+    [HideInInspector]
+    public float spawnRateMultiplier = 1f;
 
     private float nextCheckTime;
 
@@ -147,9 +153,19 @@ public class EnemySpawner : MonoBehaviour
 
         int totalWeight = 0;
 
+        // =====================================
+        // CALCULATE ROUND-BASED WEIGHTS
+        // =====================================
+
         foreach (EnemySpawnData enemy in enemies)
         {
-            totalWeight += enemy.spawnWeight;
+            int modifiedWeight =
+                Mathf.RoundToInt(
+                    enemy.spawnWeight *
+                    spawnRateMultiplier
+                );
+
+            totalWeight += modifiedWeight;
         }
 
         int randomValue =
@@ -159,7 +175,13 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (EnemySpawnData enemy in enemies)
         {
-            currentWeight += enemy.spawnWeight;
+            int modifiedWeight =
+                Mathf.RoundToInt(
+                    enemy.spawnWeight *
+                    spawnRateMultiplier
+                );
+
+            currentWeight += modifiedWeight;
 
             if (randomValue < currentWeight)
             {

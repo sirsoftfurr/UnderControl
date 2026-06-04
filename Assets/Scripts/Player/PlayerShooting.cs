@@ -150,6 +150,8 @@ public class PlayerShooting : MonoBehaviour
 
     void Shoot(Vector2 direction)
     {
+        GameStats.instance.bulletsFired++;
+        
         // =====================================
         // NORMAL GUN
         // =====================================

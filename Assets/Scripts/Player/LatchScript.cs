@@ -97,6 +97,7 @@ public class LatchScript : MonoBehaviour
             enemyCollider.transform.root.gameObject;
 
         possessedEnemy = enemy;
+        GameStats.instance.enemiesPossessed++;
 
         // Camera + AI now follow possessed enemy
         currentTarget = enemy.transform;

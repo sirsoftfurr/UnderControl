@@ -82,6 +82,11 @@ public class NewEnemyHealth : MonoBehaviour
                 Quaternion.identity
             );
         }
+        
+        if (!CompareTag("Player"))
+        {
+            GameStats.instance.enemiesKilled++;
+        }
 
         Destroy(gameObject);
     }
