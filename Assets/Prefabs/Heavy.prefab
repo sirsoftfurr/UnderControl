@@ -1653,7 +1653,7 @@ Rigidbody2D:
   m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 5.5
+  m_GravityScale: 7
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1678,8 +1678,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformerEnemyAI
   player: {fileID: 0}
-  moveSpeed: 3
-  jumpForce: 7
+  moveSpeed: 10
+  jumpForce: 31
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1705,8 +1705,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShooter
   firePoint: {fileID: 2287943632596059338}
   bulletPrefab: {fileID: 3670604370100984899, guid: 4a9b7ba09a38a7e4d81ca4d5f84253ea, type: 3}
-  fireRate: 1
-  damage: 20
+  fireRate: 7
+  damage: 15
   bulletSpeed: 10
   isShotgun: 0
   pelletCount: 6
@@ -1765,8 +1765,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f168bb5216948f4aa8e66cd65d614ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  speed: 5
-  jumpForce: 10
+  speed: 10
+  jumpForce: 22
   jumpTime: 0.2
   groundCheck: {fileID: 8379813328744486111}
   groundMask:
@@ -1796,7 +1796,7 @@ MonoBehaviour:
   shootPoint: {fileID: 2287943632596059338}
   projectilePrefab: {fileID: 3670604370100984899, guid: 4a9b7ba09a38a7e4d81ca4d5f84253ea, type: 3}
   bulletSpeed: 10
-  fireRate: 5
+  fireRate: 10
   maxAmmo: 20
   isShotgun: 0
   pelletCount: 6

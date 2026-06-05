@@ -7,8 +7,8 @@ public class PlatformerEnemyAI : MonoBehaviour
     public Transform player;
 
     [Header("Movement")]
-    public float moveSpeed = 3f;
-    public float jumpForce = 7f;
+    public float moveSpeed = 5f;
+    public float jumpForce = 16f;
 
     [Header("Ground Check")]
     public LayerMask groundLayer;
