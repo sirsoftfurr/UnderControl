@@ -200,6 +200,15 @@ public class PauseMenu : MonoBehaviour
             StartCoroutine(OpenPauseMenu());
         }
     }
+
+    public void LoadMainMenu()
+    {
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(
+            "MainMenu"
+        );
+    }
     
    
 }

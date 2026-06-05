@@ -1456,8 +1456,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformerEnemyAI
   player: {fileID: 0}
-  moveSpeed: 3
-  jumpForce: 15
+  moveSpeed: 7
+  jumpForce: 26
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
