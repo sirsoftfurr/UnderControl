@@ -7,22 +7,21 @@ public class DeathScreen : MonoBehaviour
 {
     [Header("UI")]
     public GameObject deathScreenUI;
-
     public GameObject greenScreenEffect;
 
     [Header("Animation")]
     public Animator greenAnimator;
-
     public float animationLength = 1f;
 
     [Header("Stats")]
     public TMP_Text roundReachedText;
-
     public TMP_Text killsText;
-
     public TMP_Text possessionsText;
-
     public TMP_Text bulletsText;
+    
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip openSound;
 
     private bool isShowing = false;
 
@@ -72,6 +71,20 @@ public class DeathScreen : MonoBehaviour
         if (greenScreenEffect != null)
         {
             greenScreenEffect.SetActive(true);
+            
+            if (audioSource != null &&
+                openSound != null)
+            {
+                audioSource.pitch =
+                    UnityEngine.Random.Range(
+                        0.98f,
+                        1.02f
+                    );
+
+                audioSource.PlayOneShot(
+                    openSound
+                );
+            }
         }
 
         // Play popup animation

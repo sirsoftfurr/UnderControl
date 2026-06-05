@@ -18,6 +18,13 @@ public class RoundPopup : MonoBehaviour
     public float popupDuration = 2f;
 
     private bool showingPopup = false;
+    
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip openSound;
+
+    public AudioClip closeSound;
 
     // ==================================================
     // START
@@ -55,6 +62,20 @@ public class RoundPopup : MonoBehaviour
 
         // Enable popup
         popupObject.SetActive(true);
+        
+        if (audioSource != null &&
+            openSound != null)
+        {
+            audioSource.pitch =
+                Random.Range(
+                    0.98f,
+                    1.02f
+                );
+
+            audioSource.PlayOneShot(
+                openSound
+            );
+        }
 
         // Hide text initially
         if (roundText != null)
@@ -103,6 +124,20 @@ public class RoundPopup : MonoBehaviour
 
         // Wait for hide animation
         yield return new WaitForSeconds(1f);
+        
+        if (audioSource != null &&
+            closeSound != null)
+        {
+            audioSource.pitch =
+                UnityEngine.Random.Range(
+                    0.98f,
+                    1.02f
+                );
+
+            audioSource.PlayOneShot(
+                closeSound
+            );
+        }
 
         // Disable popup
         popupObject.SetActive(false);

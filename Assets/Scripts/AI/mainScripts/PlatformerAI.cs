@@ -18,6 +18,15 @@ public class PlatformerEnemyAI : MonoBehaviour
     [Header("Graphics")]
     // Drag rigged graphics object here
     public Transform graphics;
+    
+    [Header("Footsteps")]
+    public AudioSource footstepSource;
+
+    public AudioClip[] footstepSounds;
+
+    public float footstepInterval = 0.4f;
+
+    private float footstepTimer;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -83,6 +92,7 @@ public class PlatformerEnemyAI : MonoBehaviour
         }
 
         FollowPath();
+        HandleFootsteps();
 
         UpdateAnimations();
     }
@@ -394,6 +404,55 @@ public class PlatformerEnemyAI : MonoBehaviour
             "isJumping",
             !IsGrounded()
         );
+    }
+    
+    void HandleFootsteps()
+    {
+        // Not moving
+        if (Mathf.Abs(rb.linearVelocity.x) < 0.1f)
+            return;
+
+        // In air
+        if (!IsGrounded())
+            return;
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer <= 0f)
+        {
+            if (!footstepSource.isPlaying)
+            {
+                PlayFootstep();
+            }
+
+            footstepTimer =
+                footstepInterval;
+        }
+    }
+
+    void PlayFootstep()
+    {
+        if (footstepSource == null)
+            return;
+
+        if (footstepSounds.Length == 0)
+            return;
+
+        AudioClip clip =
+            footstepSounds[
+                UnityEngine.Random.Range(
+                    0,
+                    footstepSounds.Length
+                )
+            ];
+
+        footstepSource.pitch =
+            UnityEngine.Random.Range(
+                0.95f,
+                1.05f
+            );
+
+        footstepSource.PlayOneShot(clip);
     }
 
     // ==================================================

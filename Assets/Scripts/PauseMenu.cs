@@ -15,6 +15,13 @@ public class PauseMenu : MonoBehaviour
     public Animator greenAnimator;
 
     public float animationLength = 1f;
+    
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip openSound;
+
+    public AudioClip closeSound;
 
     private bool isPaused = false;
     private DeathScreen deathScreen;
@@ -85,6 +92,20 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
 
         greenScreenEffect.SetActive(true);
+        
+        if (audioSource != null &&
+            openSound != null)
+        {
+            audioSource.pitch =
+                UnityEngine.Random.Range(
+                    0.98f,
+                    1.02f
+                );
+
+            audioSource.PlayOneShot(
+                openSound
+            );
+        }
 
         if (greenAnimator != null)
         {
@@ -109,6 +130,20 @@ public class PauseMenu : MonoBehaviour
 
     IEnumerator ClosePauseMenu()
     {
+        if (audioSource != null &&
+            closeSound != null)
+        {
+            audioSource.pitch =
+                UnityEngine.Random.Range(
+                    0.98f,
+                    1.02f
+                );
+
+            audioSource.PlayOneShot(
+                closeSound
+            );
+        }
+        
         isTransitioning = true;
 
         isPaused = false;

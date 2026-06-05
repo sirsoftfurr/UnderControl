@@ -1,8 +1,5 @@
-using System;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Random = System.Random;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -34,6 +31,15 @@ public class PlayerMovement : MonoBehaviour
     // If true, face mouse instead of movement
     [HideInInspector]
     public bool faceMouse = false;
+    
+    [Header("Footsteps")]
+    public AudioSource footstepSource;
+
+    public AudioClip[] footstepSounds;
+
+    public float footstepInterval = 0.4f;
+
+    private float footstepTimer;
 
     private Vector3 originalScale;
 
@@ -61,6 +67,8 @@ public class PlayerMovement : MonoBehaviour
             moveInput * speed,
             body.linearVelocity.y
         );
+        
+        HandleFootsteps();
 
         // =====================================
         // FLIP CHARACTER
@@ -214,6 +222,53 @@ public class PlayerMovement : MonoBehaviour
             groundMask
         );
     }
+    
+    void HandleFootsteps()
+    {
+        // Not moving
+        if (Mathf.Abs(body.linearVelocity.x) < 0.1f)
+            return;
+
+        // In air
+        if (!IsGrounded())
+            return;
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer <= 0f)
+        {
+            if (!footstepSource.isPlaying)
+            {
+                PlayFootstep();
+            }
+
+            footstepTimer =
+                footstepInterval;
+        }
+    }
+    
+    void PlayFootstep()
+    {
+        if (footstepSource == null)
+            return;
+
+        if (footstepSounds.Length == 0)
+            return;
+
+        AudioClip clip =
+            footstepSounds[
+                UnityEngine.Random.Range(
+                    0,
+                    footstepSounds.Length
+                )
+            ];
+
+        footstepSource.pitch =
+            UnityEngine.Random.Range(0.95f, 1.05f);
+
+        footstepSource.PlayOneShot(clip);
+    }
+    
 
     // =====================================
     // GIZMOS
