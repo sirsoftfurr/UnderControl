@@ -1750,6 +1750,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7584021049555772574}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5977697480309847400}
     - targetCorrespondingSourceObject: {fileID: 1596357972171728719, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7094046154297823983}
@@ -2239,6 +2242,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5977697480309847400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921776237166381438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc3e549d01111a46852ea0459467ad1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomHeadOnSpawn
+  headResolver: {fileID: 7094046154297823983}
 --- !u!4 &5743787381118301896 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8350678087143186933, guid: ba44cd397f45b4248b05912ccbbe0527, type: 3}
