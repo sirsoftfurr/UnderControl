@@ -19,7 +19,7 @@ public class LatchScript : MonoBehaviour
 
     [Header("Invisible Layer")]
     public string invisibleLayerName = "InvisiblePlayer";
-
+    
     private int originalLayer;
 
     private GameObject possessedEnemy = null;
@@ -73,6 +73,8 @@ public class LatchScript : MonoBehaviour
 
             transform.rotation =
                 Quaternion.identity;
+            transform.localScale =
+                originalScale;
         }
     }
 
@@ -97,6 +99,7 @@ public class LatchScript : MonoBehaviour
             enemyCollider.transform.root.gameObject;
 
         possessedEnemy = enemy;
+        
         GameStats.instance.enemiesPossessed++;
 
         // Camera + AI now follow possessed enemy
@@ -154,13 +157,9 @@ public class LatchScript : MonoBehaviour
         // =========================================
 
         storedPlayerPosition = transform.position;
-
-        transform.SetParent(enemy.transform);
         
         // Keep hidden player INSIDE possessed enemy
         // so enemy AI/raycast tracks correctly
-        
-        transform.localPosition = Vector3.zero;
         
         // Prevent inheriting enemy scale
         transform.localScale = originalScale;
@@ -374,6 +373,8 @@ public class LatchScript : MonoBehaviour
     {
         if (possessedEnemy == null)
             return;
+        
+        transform.SetParent(null);
 
         EnemyUI ui =
             possessedEnemy.GetComponentInChildren<EnemyUI>(true);
@@ -385,9 +386,9 @@ public class LatchScript : MonoBehaviour
         // DETACH PLAYER
         // =========================================
 
-        transform.SetParent(null);
-
         transform.localScale = originalScale;
+        
+        
 
         Vector3 exitPosition =
             possessedEnemy.transform.position +
